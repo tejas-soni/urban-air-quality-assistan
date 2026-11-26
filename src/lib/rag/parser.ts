@@ -6,8 +6,10 @@ function parseFrontmatter(raw: string): { meta: Record<string, string>; content:
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
   if (!match) return { meta: {}, content: raw };
 
+  const metaBlock = match[1] ?? '';
+  const bodyBlock = match[2] ?? raw;
   const meta: Record<string, string> = {};
-  for (const line of match[1].split(/\r?\n/)) {
+  for (const line of metaBlock.split(/\r?\n/)) {
     const idx = line.indexOf(':');
     if (idx > 0) {
       const key = line.slice(0, idx).trim();
@@ -15,15 +17,16 @@ function parseFrontmatter(raw: string): { meta: Record<string, string>; content:
       meta[key] = val;
     }
   }
-  return { meta, content: match[2].trim() };
+  return { meta, content: bodyBlock.trim() };
 }
 
 function extractSources(content: string): { body: string; sources: string[] } {
   const parts = content.split(/\r?\n##\s+Sources\s*\r?\n/i);
-  const body = parts[0].trim();
-  if (parts.length < 2) return { body, sources: [] };
+  const body = (parts[0] ?? '').trim();
+  const sourcesPart = parts[1];
+  if (!sourcesPart) return { body, sources: [] };
 
-  const sources = parts[1]
+  const sources = sourcesPart
     .split(/\r?\n/)
     .map((line) => line.replace(/^[-*]\s*/, '').trim())
     .filter((line) => line.length > 0);

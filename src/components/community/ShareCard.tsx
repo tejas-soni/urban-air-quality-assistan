@@ -44,7 +44,11 @@ export function ShareCard({ plan }: ShareCardProps) {
             onClick={handleCopy}
             className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
           >
-            {copied ? <Check className="h-4 w-4 text-emerald-700" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
+            {copied ? (
+              <Check className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+            ) : (
+              <Copy className="h-4 w-4" aria-hidden="true" />
+            )}
             <span>{copied ? 'Copied Summary' : 'Copy Summary'}</span>
           </button>
 
@@ -76,7 +80,9 @@ export function ShareCard({ plan }: ShareCardProps) {
         </div>
         <div className="rounded-xl bg-sky-50 p-4">
           <dt className="text-xs font-semibold text-sky-900">Car Trips Replaced</dt>
-          <dd className="mt-1 text-2xl font-bold text-sky-950">{plan.carTripsReplaced} trips/day</dd>
+          <dd className="mt-1 text-2xl font-bold text-sky-950">
+            {plan.carTripsReplaced} trips/day
+          </dd>
         </div>
         <div className="rounded-xl bg-slate-50 p-4">
           <dt className="text-xs font-semibold text-slate-700">Estimated PM2.5 Impact</dt>

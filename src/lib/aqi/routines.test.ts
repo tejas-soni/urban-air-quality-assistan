@@ -19,8 +19,8 @@ describe('buildPersonaRoutines', () => {
     const delhi = buildBaselineReading('New Delhi');
     const routines = buildPersonaRoutines(delhi, BASE_PROFILE);
     expect(routines).toHaveLength(3);
-    expect(routines[0].title).toContain('Sealed');
-    expect(routines[1].sourceCitation).toContain('02-hepa-purifier-cadr-sizing.md');
+    expect(routines[0]?.title).toContain('Sealed');
+    expect(routines[1]?.sourceCitation).toContain('02-hepa-purifier-cadr-sizing.md');
   });
 
   it('generates family moderate-AQI routines with DIY recommendation when purifier is none', () => {
@@ -31,8 +31,8 @@ describe('buildPersonaRoutines', () => {
       purifier: 'none',
       sensitiveMembers: false,
     });
-    expect(routines[0].title).toContain('Afternoon Ventilation');
-    expect(routines[1].title).toContain('DIY Corsi-Rosenthal');
+    expect(routines[0]?.title).toContain('Afternoon Ventilation');
+    expect(routines[1]?.title).toContain('DIY Corsi-Rosenthal');
   });
 
   it('generates commuter timing, mode, and recirculation routines', () => {
@@ -43,8 +43,8 @@ describe('buildPersonaRoutines', () => {
       commuteDistanceKm: 3,
       flexibleTiming: true,
     });
-    expect(flex[0].title).toContain('Shift Departure');
-    expect(flex[1].title).toContain('Walking');
+    expect(flex[0]?.title).toContain('Shift Departure');
+    expect(flex[1]?.title).toContain('Walking');
 
     const fixed = buildPersonaRoutines(london, {
       ...BASE_PROFILE,
@@ -52,20 +52,20 @@ describe('buildPersonaRoutines', () => {
       commuteDistanceKm: 12,
       flexibleTiming: false,
     });
-    expect(fixed[0].title).toContain('Side-Street');
-    expect(fixed[1].title).toContain('Metro');
+    expect(fixed[0]?.title).toContain('Side-Street');
+    expect(fixed[1]?.title).toContain('Metro');
   });
 
   it('generates community anti-idling and classroom routines', () => {
     const delhi = buildBaselineReading('New Delhi');
     const comm = buildPersonaRoutines(delhi, { ...BASE_PROFILE, persona: 'community' });
     expect(comm).toHaveLength(2);
-    expect(comm[0].sourceCitation).toContain('anti-idling');
-    expect(comm[1].priority).toBe('high');
+    expect(comm[0]?.sourceCitation).toContain('anti-idling');
+    expect(comm[1]?.priority).toBe('high');
 
     const london = buildBaselineReading('London');
-    expect(buildPersonaRoutines(london, { ...BASE_PROFILE, persona: 'community' })[1].priority).toBe(
-      'medium',
-    );
+    expect(
+      buildPersonaRoutines(london, { ...BASE_PROFILE, persona: 'community' })[1]?.priority,
+    ).toBe('medium');
   });
 });

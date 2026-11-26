@@ -14,13 +14,30 @@ function morningAfternoon(reading: AqiReading): { morning: number; afternoon: nu
   };
 }
 
+function buildFiltrationStep(
+  reading: AqiReading,
+  purifier: UserProfile['purifier'],
+): RoutineRecommendation {
+  const none = purifier === 'none';
+  return {
+    id: 'family-filtration',
+    title: none ? 'Build DIY Corsi-Rosenthal Filter' : 'Run Bedroom Clean Zone',
+    windowLabel: 'Overnight + Peak Hours',
+    action: none
+      ? 'Tape four 20x20 MERV-13 filters to a box fan (~$70) for bedroom sleep protection.'
+      : 'Run purifier continuously at 4.8+ ACH in the primary bedroom with doors closed.',
+    impact: estimatePurifierImpact(reading.pollutants.pm25, purifier),
+    priority: reading.aqi > 100 ? 'high' : 'medium',
+    sourceCitation: `content/indoor-hacks/${purifier === 'hepa' ? '02-hepa-purifier-cadr-sizing.md' : '03-diy-corsi-rosenthal-box.md'}`,
+  };
+}
+
 export function buildFamilyRoutines(
   reading: AqiReading,
   profile: UserProfile,
 ): RoutineRecommendation[] {
   const { morning, afternoon } = morningAfternoon(reading);
   const severe = reading.aqi > 150;
-  const nonePurifier = profile.purifier === 'none';
 
   return [
     {
@@ -34,20 +51,12 @@ export function buildFamilyRoutines(
       priority: 'high',
       sourceCitation: 'content/indoor-hacks/01-afternoon-ventilation-timing.md',
     },
-    {
-      id: 'family-filtration',
-      title: nonePurifier ? 'Build DIY Corsi-Rosenthal Filter' : 'Run Bedroom Clean Zone',
-      windowLabel: 'Overnight + Peak Hours',
-      action: nonePurifier
-        ? 'Tape four 20x20 MERV-13 filters to a box fan (~$70) for bedroom sleep protection.'
-        : 'Run purifier continuously at 4.8+ ACH in the primary bedroom with doors closed.',
-      impact: estimatePurifierImpact(reading.pollutants.pm25, profile.purifier),
-      priority: reading.aqi > 100 ? 'high' : 'medium',
-      sourceCitation: `content/indoor-hacks/${profile.purifier === 'hepa' ? '02-hepa-purifier-cadr-sizing.md' : '03-diy-corsi-rosenthal-box.md'}`,
-    },
+    buildFiltrationStep(reading, profile.purifier),
     {
       id: 'family-play',
-      title: profile.sensitiveMembers ? 'Protect Kids & Sensitive Play' : 'Midday Outdoor Play Window',
+      title: profile.sensitiveMembers
+        ? 'Protect Kids & Sensitive Play'
+        : 'Midday Outdoor Play Window',
       windowLabel: severe ? 'Indoor Play' : '13:30–16:00',
       action: severe
         ? 'Move active kids play indoors and ensure fitted N95/KN95 masks for essential errands.'

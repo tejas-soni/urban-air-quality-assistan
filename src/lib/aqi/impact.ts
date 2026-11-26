@@ -42,10 +42,7 @@ export function estimateVentilationImpact(
 }
 
 /** Estimates indoor PM2.5 reduction from HEPA or DIY Corsi-Rosenthal filtration. */
-export function estimatePurifierImpact(
-  outdoorPm25: number,
-  method: PurifierType,
-): ImpactEstimate {
+export function estimatePurifierImpact(outdoorPm25: number, method: PurifierType): ImpactEstimate {
   const safeOutdoor = Number.isFinite(outdoorPm25) ? Math.max(0, outdoorPm25) : 0;
   const meta = PURIFIER_REDUCTION[method];
   const savedUg = Math.round((safeOutdoor * meta.pct) / 100);

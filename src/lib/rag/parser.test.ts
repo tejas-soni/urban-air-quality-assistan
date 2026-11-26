@@ -26,10 +26,22 @@ Open windows around 2 PM.
     expect(doc.sources).toEqual(['US EPA Indoor Air Guide', 'WHO 2021 AQG']);
   });
 
-  it('falls back cleanly when frontmatter or sources are missing', () => {
-    const doc = parseMarkdownDoc('fallback-slug', 'health-guidance', 'Plain markdown body.');
-    expect(doc.id).toBe('fallback-slug');
-    expect(doc.personas).toEqual(['family', 'commuter', 'community']);
-    expect(doc.sources).toEqual([]);
+  it('falls back cleanly when frontmatter, tags, or sources are missing or invalid', () => {
+    const plain = parseMarkdownDoc('fallback-slug', 'health-guidance', 'Plain markdown body.');
+    expect(plain.id).toBe('fallback-slug');
+    expect(plain.personas).toEqual(['family', 'commuter', 'community']);
+    expect(plain.sources).toEqual([]);
+
+    const partialMeta = `---
+titleOnlyNoColonLine
+personas: invalid-persona
+---
+
+Body without sources header.`;
+    const partial = parseMarkdownDoc('partial-slug', 'impact-data', partialMeta);
+    expect(partial.id).toBe('partial-slug');
+    expect(partial.personas).toEqual(['family', 'commuter', 'community']);
+    expect(partial.tags).toEqual([]);
+    expect(partial.impactMetric).toBe('');
   });
 });

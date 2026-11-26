@@ -6,7 +6,12 @@ describe('buildCommunityActionPlan', () => {
   it('generates severe-alert community plan and WhatsApp summary', () => {
     const delhi = buildBaselineReading('New Delhi');
     const plan = buildCommunityActionPlan(
-      { groupName: 'Greenwood School PTA', city: 'New Delhi', households: 45, carTripsReplaced: 20 },
+      {
+        groupName: 'Greenwood School PTA',
+        city: 'New Delhi',
+        households: 45,
+        carTripsReplaced: 20,
+      },
       delhi,
     );
     expect(plan.co2SavedKgDay).toBe(13.7);

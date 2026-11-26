@@ -1,0 +1,36 @@
+{
+  "$schema": "https://agentic-resource-discovery.org/schemas/v0.91/ard.json",
+  "version": "0.91",
+  "title": "BreatheWise Urban Air Quality Assistant",
+  "description": "GenAI urban air quality assistant grounded in WHO 2021, US EPA 2024, and UK DEFRA 2024 citations with deterministic exposure math.",
+  "entries": [
+    {
+      "identifier": "urn:air:breathewise:lookup",
+      "displayName": "Live City AQI & Forecast Lookup",
+      "type": "application/agent-card+json",
+      "url": "https://breathewise-urban-aqi.vercel.app/",
+      "representativeQueries": ["city air quality", "winter smog PM2.5", "AQI lookup"]
+    },
+    {
+      "identifier": "urn:air:breathewise:dashboard",
+      "displayName": "Persona Clean-Air Dashboard & Calculators",
+      "type": "application/agent-card+json",
+      "url": "https://breathewise-urban-aqi.vercel.app/dashboard",
+      "representativeQueries": ["room CADR calculator", "commute PM2.5 dose", "ventilation timing"]
+    },
+    {
+      "identifier": "urn:air:breathewise:chat",
+      "displayName": "Grounded AI Air Quality Coach",
+      "type": "application/agent-card+json",
+      "url": "https://breathewise-urban-aqi.vercel.app/chat",
+      "representativeQueries": ["DIY Corsi-Rosenthal filter", "shift commute 30 min", "indoor air hacks"]
+    },
+    {
+      "identifier": "urn:air:breathewise:community",
+      "displayName": "Community Clean-Air Action & WhatsApp Planner",
+      "type": "application/agent-card+json",
+      "url": "https://breathewise-urban-aqi.vercel.app/community",
+      "representativeQueries": ["school no-idling campaign", "community smog alert"]
+    }
+  ]
+}

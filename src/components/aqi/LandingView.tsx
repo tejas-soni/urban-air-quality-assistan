@@ -72,8 +72,8 @@ export function LandingView({ initialReading }: LandingViewProps) {
             Navigate winter smog with calm, quantified daily choices
           </h1>
           <p className="text-lg text-slate-700">
-            Check live urban air quality, tailor routines for your household or commute, and get
-            AI guidance backed by verified WHO/EPA research — never invented numbers.
+            Check live urban air quality, tailor routines for your household or commute, and get AI
+            guidance backed by verified WHO/EPA research — never invented numbers.
           </p>
         </div>
 

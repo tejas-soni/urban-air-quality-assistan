@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://breathewise-urban-aqi.vercel.app/sitemap.xml

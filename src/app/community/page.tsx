@@ -13,8 +13,8 @@ export default async function CommunityPage() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Community &amp; School Action Plans</h1>
           <p className="mt-2 text-base text-slate-700">
-            Generate printable and WhatsApp-ready winter smog pledges with collective emission
-            and curbside exposure savings.
+            Generate printable and WhatsApp-ready winter smog pledges with collective emission and
+            curbside exposure savings.
           </p>
         </div>
         <CommunityPlanner initialReading={initialReading} />

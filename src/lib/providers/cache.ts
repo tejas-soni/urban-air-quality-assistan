@@ -4,21 +4,28 @@ interface CacheEntry<T> {
 }
 
 export const DEFAULT_AQI_TTL_MS = 60 * 60 * 1000;
+export const DEFAULT_MAX_CACHE_ENTRIES = 100;
 
-/** Normalizes city names into consistent lowercase cache keys. */
-export function normalizeCacheKey(city: string): string {
-  return city.trim().toLowerCase().replace(/\s+/g, ' ');
+/** Normalizes city or query strings into consistent lowercase cache keys. */
+export function normalizeCacheKey(key: string): string {
+  return key.trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
-/** Deterministic in-memory TTL cache (default 60 minutes) for server-side AQI calls. */
+/** Deterministic bounded LRU + TTL cache (default 60 minutes, max 100 entries). */
 export class TtlCache<T> {
   private readonly store = new Map<string, CacheEntry<T>>();
   private readonly ttlMs: number;
+  private readonly maxEntries: number;
   private readonly nowFn: () => number;
 
-  constructor(ttlMs: number = DEFAULT_AQI_TTL_MS, nowFn: () => number = () => Date.now()) {
+  constructor(
+    ttlMs: number = DEFAULT_AQI_TTL_MS,
+    nowFn: () => number = () => Date.now(),
+    maxEntries: number = DEFAULT_MAX_CACHE_ENTRIES,
+  ) {
     this.ttlMs = Math.max(1, ttlMs);
     this.nowFn = nowFn;
+    this.maxEntries = Math.max(1, maxEntries);
   }
 
   get(key: string): T | null {
@@ -29,11 +36,21 @@ export class TtlCache<T> {
       this.store.delete(normalized);
       return null;
     }
+    this.store.delete(normalized);
+    this.store.set(normalized, entry);
     return entry.value;
   }
 
   set(key: string, value: T): void {
     const normalized = normalizeCacheKey(key);
+    if (this.store.has(normalized)) {
+      this.store.delete(normalized);
+    } else if (this.store.size >= this.maxEntries) {
+      const oldestKey = this.store.keys().next().value;
+      if (oldestKey !== undefined) {
+        this.store.delete(oldestKey);
+      }
+    }
     this.store.set(normalized, {
       value,
       expiresAt: this.nowFn() + this.ttlMs,

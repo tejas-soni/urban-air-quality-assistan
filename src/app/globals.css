@@ -1,23 +1,30 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --bg-page: #fafbfc;
   --bg-card: #ffffff;
   --text-main: #0f172a;
   --text-muted: #475569;
-  --accent: #0284c7;
+  --accent: #0369a1;
 }
 
 html,
 body {
   background-color: var(--bg-page);
   color: var(--text-main);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
 
 *:focus-visible {
-  outline: 3px solid #0284c7;
+  outline: 3px solid #0369a1;
   outline-offset: 2px;
 }
 
@@ -26,7 +33,7 @@ body {
   left: -9999px;
   top: 0;
   z-index: 50;
-  background: #0284c7;
+  background: #0369a1;
   color: #ffffff;
   padding: 0.75rem 1.25rem;
   font-weight: 600;
@@ -46,6 +53,15 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  a,
+  button,
+  article,
+  section {
+    border: 1px solid CanvasText;
   }
 }
 

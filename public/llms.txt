@@ -1,0 +1,16 @@
+# BreatheWise — Urban Air Quality Assistant
+
+> GenAI-powered Next.js assistant helping families, commuters, and community groups navigate severe winter smog and urban air pollution with source-cited WHO/EPA recommendations and quantified impacts.
+
+## Routes
+
+- [Live City AQI Lookup & Persona Selector](https://breathewise-urban-aqi.vercel.app/)
+- [Profile Onboarding](https://breathewise-urban-aqi.vercel.app/onboarding)
+- [Persona Dashboard & CADR/Commute Calculators](https://breathewise-urban-aqi.vercel.app/dashboard)
+- [Grounded AI Air Quality Coach](https://breathewise-urban-aqi.vercel.app/chat)
+- [Community Action & WhatsApp Share Planner](https://breathewise-urban-aqi.vercel.app/community)
+
+## Standards & Discovery
+
+- [Agentic Resource Directory](https://breathewise-urban-aqi.vercel.app/.well-known/ard.json)
+- [XML Sitemap](https://breathewise-urban-aqi.vercel.app/sitemap.xml)

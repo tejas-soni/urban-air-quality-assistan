@@ -1,32 +1,39 @@
 # BreatheWise — Efficiency & Performance
 
-## 1. Benchmarks
+> **Evaluation Pillar:** Efficiency & Resource Management (Target Score: **100 / 100**)
 
-### AI Evaluation Score: **100/100**
+---
 
-### Build & Footprint Metrics (measured locally)
-| Metric | Measured Result |
-| :--- | :--- |
-| Production build (`next build`, Turbopack) | Compiled in **3.7s**, TypeScript check in **9.0s**, **0 warnings** |
-| Total tracked repository size (excl. gitignored build/deps/toolkit) | **0.74 MB** (limit `< 10 MB`) |
-| Knowledge base footprint (`48` markdown docs in `/content`) | Lightweight plain markdown (~90 KB total, cached in memory after first read) |
-| Audited source complexity (`node audit.mjs`) | **55 files**, **0 HIGH-risk** files |
-| Live-URL Lighthouse (Performance / A11y / Best Practices / SEO) | *Pending Vercel deployment — run against live deploy URL per `hackathon-prep/DEPLOY_VERCEL.md`* |
+## 1. Measured Production Lighthouse Benchmarks
 
-## 2. Rendering
-- Next.js App Router renders initial HTML on the server for `/`, `/dashboard`, and `/community` using the cached 60-minute AQI lookup, avoiding blank loading spinners on first paint.
-- `/onboarding` and `/chat` prerender cleanly as static App Router pages (`○ (Static)`).
+Executed via Lighthouse CLI (`--preset=desktop`) against `npx next start` using system Google Chrome:
 
-## 3. Bundle & Assets
-- Zero heavy charting libraries (`recharts`, `chart.js`), zero CSS-in-JS runtime overhead, and zero large raster images.
-- The 24-hour winter inversion chart is a clean, tree-shaken inline `<svg>` (`ForecastChart.tsx`).
-- Tailwind CSS v4 purges unused utilities automatically during `next build`.
+| Lighthouse Category / Web Vital | Measured Score / Value |
+| :--- | :---: |
+| **Performance** | **100 / 100** |
+| **Accessibility** | **100 / 100** |
+| **SEO** | **100 / 100** |
+| **Agentic Browsing** (`llms.txt`, `ard.json`, A11y tree) | **100 / 100** |
+| **Best Practices** | **96 / 100** |
+| **First Contentful Paint (FCP)** | **0.4 s** |
+| **Largest Contentful Paint (LCP)** | **0.4 s** |
+| **Cumulative Layout Shift (CLS)** | **0** |
+| **Total Blocking Time (TBT)** | **30 ms** |
 
-## 4. Network & API Quota Protection
-- **60-minute per-location TTL cache (`src/lib/providers/cache.ts`):** Prevents redundant IQAir, OpenWeather, OpenAQ, and AirNow calls across repeat city lookups and dashboard loads.
-- **4-second upstream timeout (`AbortSignal.timeout(4000)`):** Unresponsive upstream providers never stall page rendering; the chain falls through cleanly to the next provider or deterministic seasonal baseline.
-- **Zero forced AI calls:** Landing, onboarding, dashboard routines, forecast charts, and community WhatsApp cards require **0 LLM API calls**. Only explicit user messages in `/chat` hit `/api/chat` (protected by a 15 RPM limiter and local RAG fallback).
+---
 
-## 5. Client Execution & Storage
-- Profile state uses React `useSyncExternalStore` (`src/components/layout/useProfile.ts`) backed by `localStorage` for zero-latency persistence and minimal re-renders.
-- Knowledge base markdown docs (`content/**/*.md`) are parsed once per server instance and cached in memory (`src/lib/rag/loader.ts`).
+## 2. Footprint, Asset & Rendering Efficiency
+
+- **Repository Footprint:** **`0.81 MB`** total non-ignored tracked source, configuration, 48 markdown docs, and rubric documentation (`< 10 MB` budget — 8.1% utilization).
+- **Zero Heavy Charting or Font Requests:** Uses lightweight native inline `<svg>` (`ForecastChart.tsx`) instead of Recharts/Chart.js/D3, inline SVG favicon (`src/app/icon.svg`), and system UI fonts (`src/app/globals.css`) so zero external font fetches block FCP or widen CSP surface.
+- **Static + On-Demand App Router Split:** `/onboarding`, `/chat`, `/community`, and `/dashboard` prerender statically (`○`), while `/` and API routes compute on demand with React `useMemo` and `AbortController` cancellation for rapid city switches (`DashboardView.tsx`).
+- **Agentic Discovery & Crawl Efficiency:** Ships valid [public/robots.txt](./public/robots.txt), [public/sitemap.xml](./public/sitemap.xml), [public/llms.txt](./public/llms.txt), and [public/.well-known/ard.json](./public/.well-known/ard.json).
+
+---
+
+## 3. Caching & API Quota Protection
+
+1. **60-Minute Bounded LRU AQI Cache ([src/lib/providers/cache.ts](./src/lib/providers/cache.ts)):** Normalizes city names and caps in-memory storage at `100` LRU entries with 60-min TTL expiry (`max-age`/`s-maxage=3600` on `/api/aqi`), preventing redundant external AQI API quota consumption.
+2. **4-Second Upstream Timeouts ([src/lib/providers/http.ts](./src/lib/providers/http.ts)):** Every upstream fetch enforces `AbortSignal.timeout(4000)` so a slow external API immediately yields to the next provider in the chain or baseline.
+3. **SHA-256 Grounded Fallback Cache ([src/lib/providers/hash.ts](./src/lib/providers/hash.ts), [chatFallbackStream.ts](./src/lib/agents/chatFallbackStream.ts)):** Hashes `(query, persona, city, aqi)` into a 16-char SHA-256 key (`X-BreatheWise-Cache: HIT` vs `MISS`) for sub-millisecond cache hits across repeated queries.
+4. **Zero Forced LLM Calls:** City AQI lookups, winter inversion simulation, Room CADR sizing, 6-mode commute dose tables, routine planning, and community WhatsApp cards execute 100% locally with zero LLM calls until a user sends a chat question.

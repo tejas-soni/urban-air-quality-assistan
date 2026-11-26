@@ -11,7 +11,9 @@ export function buildCommuterRoutines(
   return [
     {
       id: 'commuter-timing',
-      title: profile.flexibleTiming ? 'Shift Departure 30+ Min Post-Peak' : 'Use Side-Street Corridor',
+      title: profile.flexibleTiming
+        ? 'Shift Departure 30+ Min Post-Peak'
+        : 'Use Side-Street Corridor',
       windowLabel: profile.flexibleTiming ? '09:15 vs 08:15' : 'Off-Arterial Route',
       action: profile.flexibleTiming
         ? 'Depart 30–60 min after peak winter rush to let surface inversion disperse.'
@@ -37,7 +39,8 @@ export function buildCommuterRoutines(
       id: 'commuter-cabin',
       title: 'Cabin Recirculation in Traffic Queues',
       windowLabel: 'Congested Stretches',
-      action: 'Toggle car HVAC to recirculation in heavy traffic (brief fresh-air reset every 25 min).',
+      action:
+        'Toggle car HVAC to recirculation in heavy traffic (brief fresh-air reset every 25 min).',
       impact: estimatePurifierImpact(reading.pollutants.pm25, 'hepa'),
       priority: 'medium',
       sourceCitation: 'content/impact-data/03-in-cabin-recirculation-mode.md',

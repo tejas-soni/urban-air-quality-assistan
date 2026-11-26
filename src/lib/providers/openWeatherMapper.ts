@@ -25,6 +25,11 @@ function buildOpenWeatherDaily(items: unknown[]): AqiReading['forecast5d'] {
     });
 }
 
+function readForecast5d(forecastPayload: unknown): AqiReading['forecast5d'] {
+  const fcList = asObj(forecastPayload)?.list;
+  return Array.isArray(fcList) ? buildOpenWeatherDaily(fcList) : [];
+}
+
 /** Normalizes OpenWeather Air Pollution API (current + 5-day forecast) payloads. */
 export function normalizeOpenWeather(
   currentPayload: unknown,
@@ -36,9 +41,7 @@ export function normalizeOpenWeather(
   const pm25 = asNum(components?.pm2_5);
   if (pm25 === null) return null;
 
-  const fcList = asObj(forecastPayload)?.list;
-  const forecast5d = Array.isArray(fcList) ? buildOpenWeatherDaily(fcList) : [];
-
+  const forecast5d = readForecast5d(forecastPayload);
   return {
     aqi: pm25ToUsAqi(pm25),
     pollutants: {

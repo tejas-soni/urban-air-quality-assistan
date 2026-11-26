@@ -35,7 +35,8 @@ export const BAND_META: Record<AqiBand, AqiBandInfo> = {
     textClass: 'text-orange-950',
     borderClass: 'border-orange-300',
     hexAccent: '#EA580C',
-    guidance: 'Children, older adults, and asthma patients should shorten intense outdoor exertion.',
+    guidance:
+      'Children, older adults, and asthma patients should shorten intense outdoor exertion.',
   },
   unhealthy: {
     band: 'unhealthy',

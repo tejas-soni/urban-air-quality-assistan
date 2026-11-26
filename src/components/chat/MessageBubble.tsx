@@ -16,9 +16,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
       <div
         className={`max-w-[90%] space-y-2 rounded-2xl px-4 py-3 text-base shadow-sm sm:max-w-[82%] ${
-          isUser
-            ? 'bg-sky-700 text-white'
-            : 'border border-slate-200 bg-white text-slate-900'
+          isUser ? 'bg-sky-700 text-white' : 'border border-slate-200 bg-white text-slate-900'
         }`}
       >
         {message.parts.map((part, idx) => {

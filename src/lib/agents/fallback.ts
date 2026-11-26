@@ -17,14 +17,18 @@ export function buildFallbackAnswer(
   const header = `**Live Air Check — ${aqi.city}: AQI ${aqi.aqi} (${band.label})**\nPM2.5 is **${aqi.pollutants.pm25} µg/m³** (${aqi.whoRatio}x the WHO 24-hour guideline of 15 µg/m³). ${aqiHealthSummary(aqi.band, profile.persona)}`;
 
   const guidanceLines = citations.slice(0, 2).map((c) => `- **${c.title}:** ${c.snippet}`);
-  const routineLine = `- **Priority ${profile.persona} action (${topRoutine.windowLabel}):** ${topRoutine.action}`;
+  const routineLine = topRoutine
+    ? `- **Priority ${profile.persona} action (${topRoutine.windowLabel}):** ${topRoutine.action}`
+    : `- **Priority ${profile.persona} action:** Follow ${band.label} exposure precautions.`;
 
   const sourceList =
     citations.length > 0
       ? citations.map((c) => `[${c.id}] ${c.title} — ${c.sources[0] ?? 'WHO / US EPA KB'}`)
-      : [topRoutine.sourceCitation];
+      : [topRoutine?.sourceCitation ?? 'WHO 2021 Global Air Quality Guidelines'];
 
-  const impactSummary = topCitation?.impactMetric || topRoutine.impact.headline;
+  const fallbackHeadline =
+    topRoutine?.impact.headline ?? `${band.label} guidance: minimize peak smog exposure`;
+  const impactSummary = topCitation?.impactMetric || fallbackHeadline;
 
   return [
     header,
@@ -34,7 +38,7 @@ export function buildFallbackAnswer(
     ...guidanceLines,
     '',
     '**Quantified Impact & Sources**',
-    `- **Estimated impact:** ${topRoutine.impact.headline} (${impactSummary})`,
+    `- **Estimated impact:** ${fallbackHeadline} (${impactSummary})`,
     ...sourceList.map((s) => `- Source: ${s}`),
   ].join('\n');
 }

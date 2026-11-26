@@ -17,7 +17,7 @@ describe('curated markdown knowledge base loader', () => {
   it('retrieves relevant cited sources for ventilation and commute queries', () => {
     const vent = searchKnowledgeBase('ventilate at 2 pm vs 8 am pm2.5', { persona: 'family' });
     expect(vent.length).toBeGreaterThan(0);
-    expect(vent[0].id).toBe('afternoon-ventilation-timing');
+    expect(vent[0]?.id).toBe('afternoon-ventilation-timing');
 
     const commute = searchKnowledgeBase('shift commute 30 min metro emission', {
       persona: 'commuter',

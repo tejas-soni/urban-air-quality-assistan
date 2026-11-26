@@ -1,12 +1,6 @@
 export type Persona = 'family' | 'commuter' | 'community';
 
-export type AqiBand =
-  | 'good'
-  | 'moderate'
-  | 'usg'
-  | 'unhealthy'
-  | 'very-unhealthy'
-  | 'hazardous';
+export type AqiBand = 'good' | 'moderate' | 'usg' | 'unhealthy' | 'very-unhealthy' | 'hazardous';
 
 export type PurifierType = 'hepa' | 'diy-cr' | 'none';
 

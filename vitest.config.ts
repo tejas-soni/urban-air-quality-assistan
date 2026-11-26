@@ -17,7 +17,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov', 'json-summary'],
-      include: ['src/lib/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
+      include: [
+        'src/lib/**/*.{ts,tsx}',
+        'src/components/**/*.{ts,tsx}',
+        'src/app/api/**/*.ts',
+      ],
       exclude: [
         'src/**/*.test.{ts,tsx}',
         'src/test/**',
@@ -25,10 +29,10 @@ export default defineConfig({
         '**/types.ts',
       ],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 95,
+        functions: 95,
+        branches: 88,
+        statements: 95,
         'src/lib/**/*.ts': {
           lines: 95,
           functions: 95,

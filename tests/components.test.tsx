@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { CommuteExposureTable } from '@/components/aqi/CommuteExposureTable';
 import { DashboardView } from '@/components/aqi/DashboardView';
+import { IaqCadrCalculator } from '@/components/aqi/IaqCadrCalculator';
 import { LandingView } from '@/components/aqi/LandingView';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { MessageBubble } from '@/components/chat/MessageBubble';
@@ -22,7 +24,7 @@ describe('UI component flows and state', () => {
     pushMock.mockReset();
   });
 
-  it('switches persona from Navbar and refreshes city in DashboardView', async () => {
+  it('switches persona from Navbar, runs scenarios, and refreshes city in DashboardView', async () => {
     const delhi = buildBaselineReading('New Delhi');
     const london = buildBaselineReading('London');
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
@@ -42,11 +44,37 @@ describe('UI component flows and state', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Commuter' }));
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Commuter');
 
+    fireEvent.click(screen.getByRole('button', { name: /Simulate Winter Smog Spike/i }));
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText(/Severe Smog Trapping Risk/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Simulate Solar Dispersion/i }));
+    expect(screen.getByText(/Active Atmospheric Dispersion/i)).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: 'London' }));
     await waitFor(() => {
       expect(screen.getByText(/London, GB/)).toBeInTheDocument();
     });
     fetchSpy.mockRestore();
+  });
+
+  it('updates Room CADR calculator and Multi-Modal Commute Dose table interactively', () => {
+    render(
+      <div>
+        <IaqCadrCalculator />
+        <CommuteExposureTable pm25={138} aqi={205} />
+      </div>,
+    );
+
+    fireEvent.change(screen.getByLabelText('Room floor area (m²)'), { target: { value: '30' } });
+    fireEvent.change(screen.getByLabelText('Ceiling height (m)'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Filtration method'), { target: { value: 'hepa' } });
+    expect(screen.getByText('90 m³')).toBeInTheDocument();
+    expect(screen.getByText('432 m³/h')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('One-way trip (km)'), { target: { value: '12' } });
+    expect(screen.getByText('Underground Metro')).toBeInTheDocument();
+    expect(screen.getByText('Walking Side-Street')).toBeInTheDocument();
   });
 
   it('submits city search in LandingView using /api/aqi', async () => {
@@ -73,7 +101,9 @@ describe('UI component flows and state', () => {
     render(<OnboardingForm />);
     fireEvent.change(screen.getByLabelText('Primary profile'), { target: { value: 'commuter' } });
     fireEvent.change(screen.getByLabelText('Home city'), { target: { value: 'Salt Lake City' } });
-    fireEvent.change(screen.getByLabelText('Indoor filtration setup'), { target: { value: 'hepa' } });
+    fireEvent.change(screen.getByLabelText('Indoor filtration setup'), {
+      target: { value: 'hepa' },
+    });
     fireEvent.change(screen.getByLabelText('Typical commute mode'), { target: { value: 'metro' } });
     fireEvent.change(screen.getByLabelText('Daily round-trip distance (km)'), {
       target: { value: '15' },
@@ -121,12 +151,14 @@ describe('UI component flows and state', () => {
   });
 
   it('renders ChatPanel suggestions, submits question, and renders MessageBubble parts', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response('data: {"type":"text-start","id":"1"}\n\ndata: {"type":"text-delta","id":"1","delta":"Open windows at 2 PM."}\n\ndata: {"type":"text-end","id":"1"}\n\ndata: [DONE]\n\n', {
-        status: 200,
-        headers: { 'Content-Type': 'text/event-stream' },
-      }),
-    );
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(
+        new Response(
+          'data: {"type":"text-start","id":"1"}\n\ndata: {"type":"text-delta","id":"1","delta":"Open windows at 2 PM."}\n\ndata: {"type":"text-end","id":"1"}\n\ndata: [DONE]\n\n',
+          { status: 200, headers: { 'Content-Type': 'text/event-stream' } },
+        ),
+      );
 
     render(<ChatPanel />);
     const input = screen.getByLabelText(/Ask BreatheWise/i);

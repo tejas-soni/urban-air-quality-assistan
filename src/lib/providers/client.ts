@@ -3,7 +3,7 @@ import { buildBaselineReading } from '@/lib/aqi/baseline';
 import { DEFAULT_AQI_TTL_MS, TtlCache } from '@/lib/providers/cache';
 import { runProviderChain, type ProviderEnvKeys } from '@/lib/providers/chain';
 import { geocodeOpenWeather, type FetchLike } from '@/lib/providers/http';
-import type { AqiReading } from '@/lib/types';
+import type { AqiReading, ProviderName } from '@/lib/types';
 
 export type { ProviderEnvKeys };
 
@@ -24,6 +24,26 @@ function readEnvKeys(): ProviderEnvKeys {
   };
 }
 
+function finalizeReading(
+  merged: AqiReading,
+  used: ProviderName[],
+  failed: ProviderName[],
+  fallbackNote: string,
+): AqiReading {
+  const providersUsed: ProviderName[] = used.length > 0 ? used : ['baseline'];
+  const note = used.length > 0 ? `Live station/forecast blend (${used.join(', ')})` : fallbackNote;
+  return {
+    ...merged,
+    band: classifyAqi(merged.aqi).band,
+    whoRatio: whoGuidelineRatio(merged.pollutants.pm25),
+    providersUsed,
+    providersFailed: failed,
+    cached: false,
+    updatedAt: new Date().toISOString(),
+    note,
+  };
+}
+
 /** Fetches live AQI with 60-min caching and multi-provider fallback across IQAir, OpenWeather, OpenAQ, AirNow, and baseline. */
 export async function fetchCityAqi(
   rawCity: string,
@@ -36,22 +56,14 @@ export async function fetchCityAqi(
 
   const keys = options.keys ?? readEnvKeys();
   const fetchFn = options.fetchFn ?? fetch;
-  let base = buildBaselineReading(cleanCity);
+  const baseline = buildBaselineReading(cleanCity);
   const geo = await geocodeOpenWeather(cleanCity, keys.openweather, fetchFn);
-  if (geo) base = { ...base, lat: geo.lat, lon: geo.lon, country: geo.country ?? base.country };
+  const seeded = geo
+    ? { ...baseline, lat: geo.lat, lon: geo.lon, country: geo.country ?? baseline.country }
+    : baseline;
 
-  const { merged, used, failed } = await runProviderChain(base, keys, fetchFn);
-  const result: AqiReading = {
-    ...merged,
-    band: classifyAqi(merged.aqi).band,
-    whoRatio: whoGuidelineRatio(merged.pollutants.pm25),
-    providersUsed: used.length > 0 ? used : ['baseline'],
-    providersFailed: failed,
-    cached: false,
-    updatedAt: new Date().toISOString(),
-    note: used.length > 0 ? `Live station/forecast blend (${used.join(', ')})` : base.note,
-  };
-
+  const { merged, used, failed } = await runProviderChain(seeded, keys, fetchFn);
+  const result = finalizeReading(merged, used, failed, baseline.note);
   cache.set(cleanCity, result);
   return result;
 }

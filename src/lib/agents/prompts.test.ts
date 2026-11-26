@@ -34,7 +34,12 @@ describe('agent prompts and input guard', () => {
     expect(extractLastUserText([{ role: 'user', content: 'Fallback string' }])).toBe(
       'Fallback string',
     );
-    expect(extractLastUserText([{ role: 'assistant', content: 'Only assistant' }])).toBe('');
+    expect(
+      extractLastUserText([
+        { role: 'user', parts: [{ type: 'text', text: '' }] },
+        { role: 'assistant', content: 'Only assistant' },
+      ]),
+    ).toBe('');
   });
 
   it('builds persona-tailored system instructions with AQI context', () => {

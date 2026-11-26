@@ -27,4 +27,17 @@ describe('TtlCache', () => {
     cache.clear();
     expect(cache.size()).toBe(0);
   });
+
+  it('evicts the least recently used entry when exceeding maxEntries', () => {
+    const cache = new TtlCache<number>(DEFAULT_AQI_TTL_MS, () => 1_000_000, 2);
+    cache.set('Delhi', 1);
+    cache.set('London', 2);
+    expect(cache.get('Delhi')).toBe(1);
+    cache.set('Beijing', 3);
+    cache.set('Delhi', 9);
+    expect(cache.size()).toBe(2);
+    expect(cache.get('London')).toBeNull();
+    expect(cache.get('Delhi')).toBe(9);
+    expect(cache.get('Beijing')).toBe(3);
+  });
 });

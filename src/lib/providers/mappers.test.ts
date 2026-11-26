@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  normalizeIqAir,
-  normalizeOpenWeather,
-  normalizeOpenAq,
-  normalizeAirNow,
-} from './mappers';
+import { normalizeIqAir, normalizeOpenWeather, normalizeOpenAq, normalizeAirNow } from './mappers';
 
 describe('AQI provider normalizers', () => {
   it('normalizes valid IQAir payloads and rejects invalid ones', () => {
@@ -17,6 +12,18 @@ describe('AQI provider normalizers', () => {
       },
     });
     expect(ok).toEqual({ city: 'Delhi', country: 'India', lon: 77.2, lat: 28.6, aqi: 184 });
+
+    const partialCoords = normalizeIqAir({
+      data: { current: { pollution: { aqius: 92.4 } }, location: { coordinates: 'invalid' } },
+    });
+    expect(partialCoords).toEqual({
+      city: undefined,
+      country: undefined,
+      lon: undefined,
+      lat: undefined,
+      aqi: 92,
+    });
+
     expect(normalizeIqAir(null)).toBeNull();
     expect(normalizeIqAir({ data: {} })).toBeNull();
   });
@@ -27,6 +34,7 @@ describe('AQI provider normalizers', () => {
     };
     const forecast = {
       list: [
+        { dt: 'bad', components: { pm2_5: 10 } },
         { dt: 1735689600, components: { pm2_5: 40 } },
         { dt: 1735700400, components: { pm2_5: 50 } },
         { dt: 1735776000, components: { pm2_5: 30 } },
@@ -36,6 +44,7 @@ describe('AQI provider normalizers', () => {
     expect(ok?.aqi).toBeGreaterThan(100);
     expect(ok?.pollutants?.pm25).toBe(45.4);
     expect(ok?.forecast5d?.length).toBe(2);
+    expect(normalizeOpenWeather(current, { list: [] })?.forecast5d).toBeUndefined();
     expect(normalizeOpenWeather({})).toBeNull();
   });
 

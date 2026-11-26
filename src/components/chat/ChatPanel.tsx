@@ -68,9 +68,9 @@ export function ChatPanel({ compact = false }: ChatPanelProps) {
           <button
             key={q}
             type="button"
-            disabled={isBusy}
+            aria-disabled={isBusy}
             onClick={() => handleSend(q)}
-            className="min-h-[38px] rounded-xl border border-sky-200 bg-sky-50 px-3 py-1.5 text-left text-xs font-medium text-sky-900 hover:bg-sky-100 disabled:opacity-50"
+            className="min-h-[44px] rounded-xl border border-sky-200 bg-sky-50 px-3 py-1.5 text-left text-xs font-medium text-sky-900 hover:bg-sky-100 aria-disabled:opacity-50"
           >
             {q}
           </button>

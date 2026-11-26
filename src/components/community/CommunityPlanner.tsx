@@ -31,7 +31,7 @@ export function CommunityPlanner({ initialReading }: CommunityPlannerProps) {
 
   async function refreshCity(e: React.FormEvent) {
     e.preventDefault();
-    if (city.trim().length < 2) return;
+    if (loading || city.trim().length < 2) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/aqi?city=${encodeURIComponent(city.trim())}`);
@@ -106,8 +106,8 @@ export function CommunityPlanner({ initialReading }: CommunityPlannerProps) {
         <div className="sm:col-span-2 lg:col-span-5">
           <button
             type="submit"
-            disabled={loading}
-            className="min-h-[44px] rounded-xl bg-sky-700 px-5 py-2 text-sm font-semibold text-white hover:bg-sky-800 disabled:opacity-60"
+            aria-disabled={loading}
+            className="min-h-[44px] rounded-xl bg-sky-700 px-5 py-2 text-sm font-semibold text-white hover:bg-sky-800 aria-disabled:opacity-60"
           >
             {loading ? 'Updating city AQI...' : 'Update City Reading & Plan'}
           </button>

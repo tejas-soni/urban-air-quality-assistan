@@ -27,7 +27,7 @@ export function extractLastUserText(
 ): string {
   for (let i = messages.length - 1; i >= 0; i -= 1) {
     const msg = messages[i];
-    if (msg.role !== 'user') continue;
+    if (!msg || msg.role !== 'user') continue;
     if (Array.isArray(msg.parts)) {
       const joined = msg.parts
         .filter((p) => p.type === 'text' && typeof p.text === 'string')

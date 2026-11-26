@@ -4,17 +4,32 @@ import AxeBuilder from '@axe-core/playwright';
 const ROUTES = ['/', '/onboarding', '/dashboard', '/chat', '/community'];
 
 for (const route of ROUTES) {
-  test(`route ${route} has zero WCAG 2.1 AA axe violations`, async ({ page }) => {
+  test(`route ${route} passes WCAG 2.2 AA axe, zero console/CSP errors, and zero horizontal overflow`, async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') errors.push(msg.text());
+    });
+    page.on('pageerror', (err) => errors.push(err.message));
+
     await page.goto(route);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth,
+    );
+    expect(overflow, `${route} horizontal overflow`).toBe(false);
+
     const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa'])
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
       .analyze();
     expect(results.violations).toEqual([]);
+    expect(errors).toEqual([]);
   });
 }
 
-test('full user journey: onboarding -> dashboard -> streaming AI chat -> community share card', async ({
+test('full user journey: onboarding -> dashboard calculators & simulator -> AI chat -> community share card', async ({
   page,
 }) => {
   await page.goto('/onboarding');
@@ -24,6 +39,13 @@ test('full user journey: onboarding -> dashboard -> streaming AI chat -> communi
 
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Commuter');
+
+  await page.getByLabel('Room floor area (m²)').fill('30');
+  await expect(page.getByText('403 m³/h')).toBeVisible();
+  await page.getByRole('button', { name: /Simulate Winter Smog Spike/i }).click();
+  await expect(
+    page.locator('[role="alert"]', { hasText: /Severe Smog Trapping Risk/i }),
+  ).toBeVisible();
 
   await page.getByRole('link', { name: 'AI Chat', exact: true }).click();
   await expect(page).toHaveURL(/\/chat/);

@@ -34,12 +34,12 @@ describe('searchDocs', () => {
       limit: 2,
     });
     expect(hits).toHaveLength(1);
-    expect(hits[0].id).toBe('vent');
-    expect(hits[0].sources).toEqual(['US EPA Ventilation Guide']);
+    expect(hits[0]?.id).toBe('vent');
+    expect(hits[0]?.sources).toEqual(['US EPA Ventilation Guide']);
   });
 
   it('returns persona-prioritized fallback matches for stopword-only queries', () => {
     const hits = searchDocs(SAMPLE_DOCS, 'the and for', { persona: 'commuter' });
-    expect(hits[0].id).toBe('commute');
+    expect(hits[0]?.id).toBe('commute');
   });
 });
