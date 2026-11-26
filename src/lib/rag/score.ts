@@ -1,3 +1,6 @@
+/**
+ * BM25-inspired keyword, tag, impact-metric, and persona affinity scorer for RAG retrieval.
+ */
 import type { KbDoc, Persona } from '@/lib/types';
 
 const STOPWORDS = new Set([
@@ -31,6 +34,7 @@ const STOPWORDS = new Set([
   'by',
 ]);
 
+/** Tokenizes free-text user queries into clean searchable keywords excluding stopwords. */
 export function tokenizeQuery(text: string): string[] {
   return text
     .toLowerCase()
@@ -48,6 +52,7 @@ function scoreToken(doc: KbDoc, tok: string): number {
   return pts;
 }
 
+/** Computes weighted keyword and persona relevance score for a knowledge-base document. */
 export function scoreDocument(doc: KbDoc, tokens: string[], persona?: Persona): number {
   const personaHit = Boolean(persona && doc.personas.includes(persona));
   if (tokens.length === 0) return personaHit ? 2 : 1;

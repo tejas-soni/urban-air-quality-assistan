@@ -1,3 +1,6 @@
+/**
+ * Accessible AQI severity chip combining high-contrast badge styling, text label, and icon.
+ */
 import { AlertTriangle, ShieldAlert, ShieldCheck, Siren, Skull, Sun } from 'lucide-react';
 import { classifyAqi } from '@/lib/aqi/bands';
 import type { AqiBandInfo } from '@/lib/types';
@@ -16,6 +19,7 @@ const ICON_MAP: Record<AqiBandInfo['iconName'], typeof Sun> = {
   skull: Skull,
 };
 
+/** Renders AQI band severity using icon, text category, and numeric index. */
 export function AqiBadge({ aqi, compact = false }: AqiBadgeProps) {
   const info = classifyAqi(aqi);
   const Icon = ICON_MAP[info.iconName];

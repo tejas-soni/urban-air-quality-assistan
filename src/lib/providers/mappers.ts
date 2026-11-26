@@ -1,3 +1,6 @@
+/**
+ * Provider payload normalizers converting heterogeneous AQI APIs into unified AqiReading patches.
+ */
 import { asNum, asObj, asStr } from '@/lib/providers/jsonHelpers';
 import type { AqiReading } from '@/lib/types';
 

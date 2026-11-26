@@ -1,3 +1,6 @@
+/**
+ * Family persona daily routine generator prioritizing children, older adults, and indoor air quality.
+ */
 import {
   estimateCommuteImpact,
   estimatePurifierImpact,
@@ -32,6 +35,7 @@ function buildFiltrationStep(
   };
 }
 
+/** Builds three prioritized, cited daily routines tailored to household sensitivity and purifiers. */
 export function buildFamilyRoutines(
   reading: AqiReading,
   profile: UserProfile,

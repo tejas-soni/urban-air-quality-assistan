@@ -1,11 +1,67 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+/**
+ * Interactive profile onboarding form persisting household/commuter defaults locally with Zod safety.
+ */
 import { Check } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { type SyntheticEvent, useState } from 'react';
 import { updateAppProfile, useUserProfile } from '@/components/layout/useProfile';
+import { OnboardingFields } from '@/components/onboarding/OnboardingFields';
+import { PersonaSchema } from '@/lib/schemas';
 import type { CommuteMode, Persona, PurifierType } from '@/lib/types';
 
+function PersonaAndCityFields({
+  persona,
+  city,
+  onPersona,
+  onCity,
+}: {
+  persona: Persona;
+  city: string;
+  onPersona: (p: Persona) => void;
+  onCity: (c: string) => void;
+}) {
+  return (
+    <>
+      <div>
+        <label htmlFor="onboard-persona" className="block text-sm font-semibold text-slate-800">
+          Primary profile
+        </label>
+        <select
+          id="onboard-persona"
+          value={persona}
+          onChange={(e) => {
+            const p = PersonaSchema.safeParse(e.target.value);
+            if (p.success) onPersona(p.data);
+          }}
+          className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
+        >
+          <option value="family">Family (kids, elders, indoor air, school runs)</option>
+          <option value="commuter">Commuter (timing shift, transit vs car, N95)</option>
+          <option value="community">Community (schools, PTAs, neighborhood alerts)</option>
+        </select>
+      </div>
+      <div>
+        <label htmlFor="onboard-city" className="block text-sm font-semibold text-slate-800">
+          Home city
+        </label>
+        <input
+          id="onboard-city"
+          type="text"
+          value={city}
+          onChange={(e) => onCity(e.target.value)}
+          minLength={2}
+          maxLength={80}
+          required
+          className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-900"
+        />
+      </div>
+    </>
+  );
+}
+
+/** Saves validated UserProfile defaults to browser storage and navigates to the dashboard. */
 export function OnboardingForm() {
   const router = useRouter();
   const saved = useUserProfile();
@@ -19,7 +75,7 @@ export function OnboardingForm() {
   const [flexibleTiming, setFlexibleTiming] = useState(saved.flexibleTiming);
   const [groupSize, setGroupSize] = useState(saved.groupSize);
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     updateAppProfile({
       persona,
@@ -39,129 +95,21 @@ export function OnboardingForm() {
       onSubmit={handleSubmit}
       className="mx-auto max-w-2xl space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
     >
-      <div>
-        <label htmlFor="onboard-persona" className="block text-sm font-semibold text-slate-800">
-          Primary profile
-        </label>
-        <select
-          id="onboard-persona"
-          value={persona}
-          onChange={(e) => setPersona(e.target.value as Persona)}
-          className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-        >
-          <option value="family">Family (kids, elders, indoor air, school runs)</option>
-          <option value="commuter">Commuter (timing shift, transit vs car, N95)</option>
-          <option value="community">Community (schools, PTAs, neighborhood alerts)</option>
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="onboard-city" className="block text-sm font-semibold text-slate-800">
-          Home city
-        </label>
-        <input
-          id="onboard-city"
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          minLength={2}
-          maxLength={80}
-          required
-          className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-900"
-        />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="onboard-purifier" className="block text-sm font-semibold text-slate-800">
-            Indoor filtration setup
-          </label>
-          <select
-            id="onboard-purifier"
-            value={purifier}
-            onChange={(e) => setPurifier(e.target.value as PurifierType)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          >
-            <option value="hepa">Commercial True HEPA purifier</option>
-            <option value="diy-cr">DIY MERV-13 Corsi-Rosenthal box</option>
-            <option value="none">No air purifier yet</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="onboard-commute" className="block text-sm font-semibold text-slate-800">
-            Typical commute mode
-          </label>
-          <select
-            id="onboard-commute"
-            value={commuteMode}
-            onChange={(e) => setCommuteMode(e.target.value as CommuteMode)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          >
-            <option value="car">Solo Petrol/Diesel Car</option>
-            <option value="carpool">3-Person Carpool</option>
-            <option value="bus">Urban Bus</option>
-            <option value="metro">Electric Metro / Rail</option>
-            <option value="ebike">E-Bike / Bicycle</option>
-            <option value="walk">Walking</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="onboard-dist" className="block text-sm font-semibold text-slate-800">
-            Daily round-trip distance (km)
-          </label>
-          <input
-            id="onboard-dist"
-            type="number"
-            min={1}
-            max={150}
-            value={commuteDistanceKm}
-            onChange={(e) => setCommuteDistanceKm(Number(e.target.value) || 1)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-900"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="onboard-group" className="block text-sm font-semibold text-slate-800">
-            Community group households
-          </label>
-          <input
-            id="onboard-group"
-            type="number"
-            min={1}
-            max={500}
-            value={groupSize}
-            onChange={(e) => setGroupSize(Number(e.target.value) || 1)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-900"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <label className="flex min-h-[44px] items-center gap-3 text-base text-slate-800">
-          <input
-            type="checkbox"
-            checked={sensitiveMembers}
-            onChange={(e) => setSensitiveMembers(e.target.checked)}
-            className="h-5 w-5 rounded border-slate-300 text-sky-600"
-          />
-          <span>Household includes children, older adults, or asthma/heart sensitivity</span>
-        </label>
-
-        <label className="flex min-h-[44px] items-center gap-3 text-base text-slate-800">
-          <input
-            type="checkbox"
-            checked={flexibleTiming}
-            onChange={(e) => setFlexibleTiming(e.target.checked)}
-            className="h-5 w-5 rounded border-slate-300 text-sky-600"
-          />
-          <span>Can shift morning departure 30–60 min later on high-smog days</span>
-        </label>
-      </div>
-
+      <PersonaAndCityFields persona={persona} city={city} onPersona={setPersona} onCity={setCity} />
+      <OnboardingFields
+        purifier={purifier}
+        onPurifierChange={setPurifier}
+        commuteMode={commuteMode}
+        onCommuteModeChange={setCommuteMode}
+        commuteDistanceKm={commuteDistanceKm}
+        onDistanceChange={setCommuteDistanceKm}
+        groupSize={groupSize}
+        onGroupSizeChange={setGroupSize}
+        sensitiveMembers={sensitiveMembers}
+        onSensitiveChange={setSensitiveMembers}
+        flexibleTiming={flexibleTiming}
+        onFlexibleChange={setFlexibleTiming}
+      />
       <button
         type="submit"
         className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-sky-700 px-6 py-3 text-base font-semibold text-white hover:bg-sky-800"

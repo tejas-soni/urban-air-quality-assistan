@@ -1,5 +1,8 @@
 'use client';
 
+/**
+ * Hydration-safe external store hook synchronizing UserProfile state with localStorage.
+ */
 import { useSyncExternalStore } from 'react';
 import {
   DEFAULT_PROFILE,
@@ -37,6 +40,7 @@ function subscribe(callback: () => void): () => void {
   };
 }
 
+/** Updates the persisted browser UserProfile and notifies subscribed components. */
 export function updateAppProfile(next: UserProfile): UserProfile {
   const saved = saveStoredProfile(next);
   lastRaw = window.localStorage.getItem(PROFILE_STORAGE_KEY);
@@ -45,6 +49,7 @@ export function updateAppProfile(next: UserProfile): UserProfile {
   return saved;
 }
 
+/** Switches only the active persona in browser storage while keeping location and commute settings. */
 export function switchAppPersona(persona: Persona): UserProfile {
   const saved = switchStoredPersona(persona);
   lastRaw = window.localStorage.getItem(PROFILE_STORAGE_KEY);
@@ -53,6 +58,7 @@ export function switchAppPersona(persona: Persona): UserProfile {
   return saved;
 }
 
+/** React hook subscribing cleanly to local UserProfile changes via useSyncExternalStore. */
 export function useUserProfile(): UserProfile {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

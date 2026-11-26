@@ -1,3 +1,6 @@
+/**
+ * Bounded LRU + TTL cache preserving 60-minute provider responses within free-tier API quotas.
+ */
 interface CacheEntry<T> {
   value: T;
   expiresAt: number;

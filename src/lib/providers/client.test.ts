@@ -10,6 +10,30 @@ function okResponse(body: unknown): Response {
   });
 }
 
+const MOCK_ROUTES: readonly [string, () => Response][] = [
+  ['airvisual', () => new Response('err', { status: 503 })],
+  ['/geo/1.0/direct', () => okResponse([{ lat: 40.76, lon: -111.89, country: 'US' }])],
+  [
+    'air_pollution/forecast',
+    () => okResponse({ list: [{ dt: 1735689600, components: { pm2_5: 25 } }] }),
+  ],
+  [
+    'air_pollution',
+    () => okResponse({ list: [{ components: { pm2_5: 32, pm10: 45, o3: 40, no2: 28 } }] }),
+  ],
+  [
+    'openaq',
+    () =>
+      okResponse({
+        results: [{ sensors: [{ parameter: { name: 'pm25' }, latest: { value: 30 } }] }],
+      }),
+  ],
+  [
+    'airnowapi',
+    () => okResponse([{ ParameterName: 'PM2.5', AQI: 92, ReportingArea: 'Salt Lake' }]),
+  ],
+];
+
 describe('fetchCityAqi multi-provider fallback and cache', () => {
   it('falls back to seasonal baseline when no API keys exist and caches for 60m', async () => {
     const cache = new TtlCache<AqiReading>();
@@ -25,25 +49,10 @@ describe('fetchCityAqi multi-provider fallback and cache', () => {
   it('merges live providers and falls back gracefully when one provider errors', async () => {
     const cache = new TtlCache<AqiReading>();
     const mockFetch = async (input: string | URL | Request): Promise<Response> => {
-      const url = String(input);
-      if (url.includes('airvisual')) return new Response('err', { status: 503 });
-      if (url.includes('/geo/1.0/direct')) {
-        return okResponse([{ lat: 40.76, lon: -111.89, country: 'US' }]);
-      }
-      if (url.includes('air_pollution/forecast')) {
-        return okResponse({ list: [{ dt: 1735689600, components: { pm2_5: 25 } }] });
-      }
-      if (url.includes('air_pollution')) {
-        return okResponse({ list: [{ components: { pm2_5: 32, pm10: 45, o3: 40, no2: 28 } }] });
-      }
-      if (url.includes('openaq')) {
-        return okResponse({
-          results: [{ sensors: [{ parameter: { name: 'pm25' }, latest: { value: 30 } }] }],
-        });
-      }
-      if (url.includes('airnowapi')) {
-        return okResponse([{ ParameterName: 'PM2.5', AQI: 92, ReportingArea: 'Salt Lake' }]);
-      }
+      const url =
+        typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+      const route = MOCK_ROUTES.find(([key]) => url.includes(key));
+      if (route) return route[1]();
       throw new Error('unexpected URL');
     };
 

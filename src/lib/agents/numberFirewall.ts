@@ -1,10 +1,13 @@
+/**
+ * Programmatic numeric firewall verifying AI replies contain only grounded context numerals.
+ */
 import type { AqiReading, KbCitation, UserProfile } from '@/lib/types';
 
-/** Technical tokens containing digits that represent standards/pollutants rather than statistics. */
 const TECHNICAL_TOKENS =
   /\b(?:PM[ -]?2\.5|PM[ -]?10|PM1|NO2|SO2|O3|CO2e?|CO|N[ -]?95|KN[ -]?95|FFP[ -]?2|MERV[ -]?13|H13|HEPA[ -]?13|WHO|EPA|DEFRA|ASHRAE)\b/gi;
 
 const NUMERAL_PATTERN = /\d+(?:[.,]\d+)*/g;
+const BASELINE_NUMBERS = ['0', '1', '2', '3', '4', '5', '15', '24', '2021', '2024'];
 
 /** Extracts normalized numeric strings from text after ignoring standard pollutant/filter labels. */
 export function extractNumbersFromText(text: string): string[] {
@@ -16,22 +19,14 @@ export function extractNumbersFromText(text: string): string[] {
     .map((num) => String(num));
 }
 
-/** Builds the set of grounded numbers permitted in AI responses for a given context. */
-export function buildAllowedNumberSet(
-  aqi: AqiReading,
-  profile: UserProfile,
-  citations: ReadonlyArray<KbCitation>,
-  extraTexts: ReadonlyArray<string> = [],
-): Set<string> {
-  const allowed = new Set<string>(['0', '1', '2', '3', '4', '5', '15', '24', '2021', '2024']);
+function addTokens(allowed: Set<string>, text: string): void {
+  for (const num of extractNumbersFromText(text)) {
+    allowed.add(num);
+  }
+}
 
-  const addFromText = (text: string) => {
-    for (const num of extractNumbersFromText(text)) {
-      allowed.add(num);
-    }
-  };
-
-  for (const val of [
+function addScalarMetrics(allowed: Set<string>, aqi: AqiReading, profile: UserProfile): void {
+  const scalars: (number | null)[] = [
     aqi.aqi,
     aqi.whoRatio,
     aqi.pollutants.pm25,
@@ -40,35 +35,40 @@ export function buildAllowedNumberSet(
     aqi.pollutants.o3,
     profile.commuteDistanceKm,
     profile.groupSize,
-  ]) {
-    if (typeof val === 'number' && Number.isFinite(val)) {
-      allowed.add(String(val));
-      allowed.add(String(Math.round(val)));
-    }
+  ];
+  for (const val of scalars) {
+    if (val === null || !Number.isFinite(val)) continue;
+    allowed.add(String(val));
+    allowed.add(String(Math.round(val)));
   }
+}
+
+/** Builds the set of grounded numbers permitted in AI responses for a given context. */
+export function buildAllowedNumberSet(
+  aqi: AqiReading,
+  profile: UserProfile,
+  citations: readonly KbCitation[],
+  extraTexts: readonly string[] = [],
+): Set<string> {
+  const allowed = new Set<string>(BASELINE_NUMBERS);
+  addScalarMetrics(allowed, aqi, profile);
 
   for (const slot of aqi.forecast24h) {
     allowed.add(String(slot.aqi));
     allowed.add(String(slot.pm25));
-    addFromText(slot.hourLabel);
+    addTokens(allowed, slot.hourLabel);
   }
-
   for (const day of aqi.forecast5d) {
     allowed.add(String(day.minAqi));
     allowed.add(String(day.maxAqi));
     allowed.add(String(day.avgPm25));
   }
-
   for (const doc of citations) {
-    addFromText(doc.title);
-    addFromText(doc.snippet);
-    addFromText(doc.impactMetric);
+    addTokens(allowed, `${doc.title} ${doc.snippet} ${doc.impactMetric}`);
   }
-
   for (const extra of extraTexts) {
-    addFromText(extra);
+    addTokens(allowed, extra);
   }
-
   return allowed;
 }
 
@@ -77,8 +77,7 @@ export function findUngroundedNumbers(
   replyText: string,
   allowedNumbers: ReadonlySet<string>,
 ): string[] {
-  const found = extractNumbersFromText(replyText);
-  return [...new Set(found.filter((num) => !allowedNumbers.has(num)))];
+  return [...new Set(extractNumbersFromText(replyText).filter((num) => !allowedNumbers.has(num)))];
 }
 
 /** Verifies AI text against grounded context numbers and attaches an audit note on mismatches. */

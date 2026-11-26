@@ -1,3 +1,6 @@
+/**
+ * Multi-provider AQI fallback chain orchestrator across IQAir, OpenWeather, OpenAQ, and AirNow.
+ */
 import { build24hForecast } from '@/lib/aqi/baseline';
 import {
   fetchAirNow,
@@ -15,75 +18,53 @@ export interface ProviderEnvKeys {
   airnow?: string;
 }
 
-function mergePollutants(
-  base: AqiReading['pollutants'],
-  next: Partial<AqiReading['pollutants']> | undefined,
-): AqiReading['pollutants'] {
-  if (!next) return base;
-  return {
-    pm25: next.pm25 ?? base.pm25,
-    pm10: next.pm10 ?? base.pm10,
-    o3: next.o3 ?? base.o3,
-    no2: next.no2 ?? base.no2,
-  };
-}
+const PROVIDER_ADAPTERS: readonly {
+  name: Exclude<ProviderName, 'baseline'>;
+  fetcher: (
+    lat: number,
+    lon: number,
+    key: string,
+    fn: FetchLike,
+  ) => Promise<Partial<AqiReading> | null>;
+}[] = [
+  { name: 'iqair', fetcher: fetchIqAir },
+  { name: 'openweather', fetcher: fetchOpenWeather },
+  { name: 'openaq', fetcher: fetchOpenAq },
+  { name: 'airnow', fetcher: fetchAirNow },
+];
 
 function mergeReading(base: AqiReading, part: Partial<AqiReading>): AqiReading {
-  const pm25 = part.pollutants?.pm25;
+  const nextPollutants = part.pollutants;
+  const pm25 = nextPollutants?.pm25;
   return {
     ...base,
     aqi: part.aqi ?? base.aqi,
-    pollutants: mergePollutants(base.pollutants, part.pollutants),
+    pollutants: nextPollutants ? { ...base.pollutants, ...nextPollutants } : base.pollutants,
     forecast24h: pm25 ? build24hForecast(pm25) : base.forecast24h,
     forecast5d: part.forecast5d ?? base.forecast5d,
   };
 }
 
+/** Runs configured external AQI adapters in priority order, recording successes and failures. */
 export async function runProviderChain(
   initial: AqiReading,
   keys: ProviderEnvKeys,
   fetchFn: FetchLike,
 ): Promise<{ merged: AqiReading; used: ProviderName[]; failed: ProviderName[] }> {
-  const steps: Array<{
-    name: ProviderName;
-    key?: string;
-    run: (key: string) => Promise<Partial<AqiReading> | null>;
-  }> = [
-    {
-      name: 'iqair',
-      key: keys.iqair,
-      run: (k) => fetchIqAir(initial.lat, initial.lon, k, fetchFn),
-    },
-    {
-      name: 'openweather',
-      key: keys.openweather,
-      run: (k) => fetchOpenWeather(initial.lat, initial.lon, k, fetchFn),
-    },
-    {
-      name: 'openaq',
-      key: keys.openaq,
-      run: (k) => fetchOpenAq(initial.lat, initial.lon, k, fetchFn),
-    },
-    {
-      name: 'airnow',
-      key: keys.airnow,
-      run: (k) => fetchAirNow(initial.lat, initial.lon, k, fetchFn),
-    },
-  ];
-
   let merged = initial;
   const used: ProviderName[] = [];
   const failed: ProviderName[] = [];
 
-  for (const step of steps) {
-    if (!step.key) continue;
-    const part = await step.run(step.key);
-    if (!part) {
-      failed.push(step.name);
-      continue;
+  for (const adapter of PROVIDER_ADAPTERS) {
+    const key = keys[adapter.name];
+    if (!key) continue;
+    const part = await adapter.fetcher(initial.lat, initial.lon, key, fetchFn);
+    if (part) {
+      used.push(adapter.name);
+      merged = mergeReading(merged, part);
+    } else {
+      failed.push(adapter.name);
     }
-    used.push(step.name);
-    merged = mergeReading(merged, part);
   }
   return { merged, used, failed };
 }

@@ -1,21 +1,33 @@
+/**
+ * Normalizers for OpenAQ v3 monitor payloads and US EPA AirNow JSON feeds.
+ */
 import { pm25ToUsAqi } from '@/lib/aqi/bands';
 import { asNum, asObj, asStr } from '@/lib/providers/jsonHelpers';
 import type { AqiReading } from '@/lib/types';
+
+function extractSensorRecords(results: readonly unknown[]): Record<string, unknown>[] {
+  const records: Record<string, unknown>[] = [];
+  for (const item of results) {
+    const sensors = asObj(item)?.sensors;
+    if (!Array.isArray(sensors)) continue;
+    for (const entry of sensors) {
+      const rec = asObj(entry);
+      if (rec) records.push(rec);
+    }
+  }
+  return records;
+}
 
 /** Normalizes OpenAQ v3 `/v3/locations` PM2.5 monitor responses. */
 export function normalizeOpenAq(payload: unknown): Partial<AqiReading> | null {
   const results = asObj(payload)?.results;
   if (!Array.isArray(results)) return null;
-  const sensors = results.flatMap((r) => {
-    const s = asObj(r)?.sensors;
-    return Array.isArray(s) ? s : [];
+  const sensors = extractSensorRecords(results);
+  const pmSensor = sensors.find((row) => {
+    const val = asNum(asObj(row.latest)?.value);
+    return asObj(row.parameter)?.name === 'pm25' && val !== null;
   });
-  const pmSensor = sensors.find((s) => {
-    const row = asObj(s);
-    const val = asNum(asObj(row?.latest)?.value);
-    return asObj(row?.parameter)?.name === 'pm25' && val !== null;
-  });
-  const val = asNum(asObj(asObj(pmSensor)?.latest)?.value);
+  const val = asNum(asObj(pmSensor?.latest)?.value);
   if (val === null || val < 0) return null;
   return {
     aqi: pm25ToUsAqi(val),

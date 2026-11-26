@@ -1,3 +1,6 @@
+/**
+ * Accessible chat bubble displaying user prompts, AI SDK text parts, and verified tool invocations.
+ */
 import type { UIMessage } from 'ai';
 import { Wrench } from 'lucide-react';
 
@@ -5,6 +8,7 @@ interface MessageBubbleProps {
   message: UIMessage;
 }
 
+/** Renders one user or assistant UIMessage with tool execution provenance badges. */
 export function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.role === 'user';
 

@@ -1,3 +1,6 @@
+/**
+ * Single-compartment Clean Air Delivery Rate (CADR) sizing and decay clearance math (4.8 ACH).
+ */
 export interface CadrSizingResult {
   volumeM3: number;
   requiredCadrM3h: number;
@@ -5,7 +8,7 @@ export interface CadrSizingResult {
   achievedAch: number;
   clearanceMinutes80: number;
   recommendedUnit: string;
-  provenance: ReadonlyArray<{ label: string; kind: 'published' | 'assumption'; source: string }>;
+  provenance: readonly { label: string; kind: 'published' | 'assumption'; source: string }[];
 }
 
 export const DIY_CORSI_ROSENTHAL_CADR_M3H = 480;

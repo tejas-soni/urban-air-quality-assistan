@@ -1,6 +1,10 @@
+/**
+ * Onboarding setup route allowing households and commuters to configure local-first defaults.
+ */
 import { AppShell } from '@/components/layout/AppShell';
 import { OnboardingForm } from '@/components/onboarding/OnboardingForm';
 
+/** Renders the accessible onboarding form wrapped in AppShell. */
 export default function OnboardingPage() {
   return (
     <AppShell>

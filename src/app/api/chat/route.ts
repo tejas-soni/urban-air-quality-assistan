@@ -1,11 +1,19 @@
+/**
+ * Streaming AI chat route handler enforcing HTTP admission checks, rate limiting, and fallback.
+ */
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText } from 'ai';
 import { createGroundedFallbackResponse } from '@/lib/agents/chatFallbackStream';
+import { buildGuardedGeminiResponse } from '@/lib/agents/liveFirewall';
+import { toSanitizedUiMessages, type ValidatedChatMessage } from '@/lib/agents/messageNormalize';
 import { buildPersonaSystemPrompt, extractLastUserText } from '@/lib/agents/prompts';
 import { chatRateLimiter } from '@/lib/agents/rateLimit';
 import { createAirQualityTools } from '@/lib/agents/tools';
+import { resolveClientIp } from '@/lib/http/clientIp';
 import { checkPostAdmission, readJsonBodyCapped } from '@/lib/http/guard';
+import { logServerEvent, summarizeError } from '@/lib/logger';
 import { fetchCityAqi } from '@/lib/providers/client';
+import { searchKnowledgeBase } from '@/lib/rag/loader';
 import { ChatRequestSchema } from '@/lib/schemas';
 import { DEFAULT_PROFILE } from '@/lib/storage/profile';
 import type { UserProfile } from '@/lib/types';
@@ -16,39 +24,49 @@ function jsonError(error: string, status: number): Response {
   return Response.json({ error }, { status, headers: { 'Cache-Control': 'no-store' } });
 }
 
-function clientIp(req: Request): string {
-  const fwd = req.headers.get('x-forwarded-for');
-  const first = fwd ? fwd.split(',')[0] : undefined;
-  return first ? first.trim() : 'local';
+interface StreamParams {
+  apiKey: string;
+  query: string;
+  profile: UserProfile;
+  messages: readonly ValidatedChatMessage[];
+  signal: AbortSignal;
 }
 
-async function streamWithGemini(
-  apiKey: string,
-  profile: UserProfile,
-  messages: unknown[],
-  signal: AbortSignal,
-): Promise<Response> {
+async function streamWithGemini(params: StreamParams): Promise<Response> {
+  const { apiKey, query, profile, messages, signal } = params;
   const aqiContext = await fetchCityAqi(profile.city);
+  const citations = searchKnowledgeBase(query || profile.persona, {
+    persona: profile.persona,
+    limit: 4,
+  });
   const tools = createAirQualityTools(profile);
   const google = createGoogleGenerativeAI({ apiKey });
-  const modelMessages = await convertToModelMessages(messages as unknown as UIMessage[], { tools });
+  const uiMessages = toSanitizedUiMessages(messages);
+  const modelMessages = await convertToModelMessages(uiMessages, { tools });
+
   const result = streamText({
     model: google('gemini-2.5-flash'),
-    system: buildPersonaSystemPrompt(profile, aqiContext),
+    instructions: buildPersonaSystemPrompt(profile, aqiContext),
     messages: modelMessages,
     tools,
     stopWhen: stepCountIs(4),
     abortSignal: signal,
   });
-  return result.toUIMessageStreamResponse({
-    headers: { 'X-BreatheWise-Mode': 'gemini-live', 'Cache-Control': 'no-store' },
-  });
+
+  return buildGuardedGeminiResponse(
+    result,
+    { aqi: aqiContext, profile, citations, extraNumbers: [query] },
+    { 'X-BreatheWise-Mode': 'gemini-live', 'Cache-Control': 'no-store' },
+  );
 }
 
-async function parseValidatedRequest(
-  req: Request,
-): Promise<
-  | { ok: true; profile: UserProfile; query: string; messages: unknown[] }
+async function parseValidatedRequest(req: Request): Promise<
+  | {
+      ok: true;
+      profile: UserProfile;
+      query: string;
+      messages: readonly ValidatedChatMessage[];
+    }
   | { ok: false; res: Response }
 > {
   const admission = checkPostAdmission(req);
@@ -68,12 +86,12 @@ async function parseValidatedRequest(
   };
 }
 
-/** Streams persona-tailored air quality guidance with strict request admission and fallback. */
+/** Streams persona-tailored air quality guidance with strict admission, firewall, and fallback. */
 export async function POST(req: Request): Promise<Response> {
   const validated = await parseValidatedRequest(req);
   if (!validated.ok) return validated.res;
 
-  if (!chatRateLimiter.check(clientIp(req)).allowed) {
+  if (!chatRateLimiter.check(resolveClientIp(req)).allowed) {
     return createGroundedFallbackResponse(
       validated.query,
       validated.profile,
@@ -87,8 +105,15 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   try {
-    return await streamWithGemini(apiKey, validated.profile, validated.messages, req.signal);
-  } catch {
+    return await streamWithGemini({
+      apiKey,
+      query: validated.query,
+      profile: validated.profile,
+      messages: validated.messages,
+      signal: req.signal,
+    });
+  } catch (err) {
+    logServerEvent('gemini_chat_fallback', { reason: summarizeError(err) });
     return createGroundedFallbackResponse(validated.query, validated.profile, 'local-fallback');
   }
 }

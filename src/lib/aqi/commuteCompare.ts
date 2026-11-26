@@ -1,3 +1,6 @@
+/**
+ * Six-mode urban commute inhalation dose (EPA Table 6-2) and CO2e (DEFRA 2024) engine.
+ */
 import type { CommuteMode } from '@/lib/types';
 
 export interface CommuteModeComparison {
@@ -65,7 +68,7 @@ const MODE_TABLE: Record<CommuteMode, ModePhysics> = {
   },
 };
 
-const MODES_ORDER: ReadonlyArray<CommuteMode> = ['metro', 'carpool', 'bus', 'car', 'ebike', 'walk'];
+const MODES_ORDER: readonly CommuteMode[] = ['metro', 'carpool', 'bus', 'car', 'ebike', 'walk'];
 
 function classifyDoseRisk(inhaledUg: number): 'Low' | 'Moderate' | 'High' {
   if (inhaledUg >= 45) return 'High';

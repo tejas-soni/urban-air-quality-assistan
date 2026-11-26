@@ -1,3 +1,6 @@
+/**
+ * Server-side Vercel AI SDK tool definitions wiring Gemini to live AQI providers and /content RAG.
+ */
 import { tool } from 'ai';
 import { z } from 'zod';
 import { buildPersonaRoutines } from '@/lib/aqi/routines';
@@ -39,7 +42,7 @@ export function createAirQualityTools(profile: UserProfile = DEFAULT_PROFILE) {
         query: z.string().min(2).max(200).describe('Search topic, e.g. afternoon ventilation'),
         persona: PersonaSchema.optional(),
       }),
-      execute: async ({ query, persona }) => {
+      execute: ({ query, persona }) => {
         const hits = searchKnowledgeBase(query, { persona: persona ?? profile.persona, limit: 4 });
         return { citations: hits };
       },

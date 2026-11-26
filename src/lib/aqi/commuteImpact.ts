@@ -1,3 +1,6 @@
+/**
+ * Quantified commute shift and community anti-idling emission reduction calculators.
+ */
 import type { CommuteMode, ImpactEstimate } from '@/lib/types';
 
 const EMISSION_G_PER_PKM: Record<CommuteMode, number> = {

@@ -1,3 +1,6 @@
+/**
+ * Live telemetry summary card displaying current AQI, PM2.5 vs WHO ratio, pollutants, and source cache status.
+ */
 import { MapPin, RefreshCw } from 'lucide-react';
 import { AqiBadge } from '@/components/aqi/AqiBadge';
 import { classifyAqi } from '@/lib/aqi/bands';
@@ -8,6 +11,7 @@ interface AqiCardProps {
   onRefresh?: () => void;
 }
 
+/** Renders current station/baseline AQI metrics inside an accessible live region. */
 export function AqiCard({ reading, onRefresh }: AqiCardProps) {
   const band = classifyAqi(reading.aqi);
 

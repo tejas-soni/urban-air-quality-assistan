@@ -1,10 +1,13 @@
+/**
+ * US EPA 2024 PM2.5-to-AQI breakpoints and WHO 2021 guideline comparison functions.
+ */
 import { BAND_META } from '@/lib/aqi/bandData';
 import type { AqiBand, AqiBandInfo, Persona } from '@/lib/types';
 
 export const WHO_PM25_24H_GUIDELINE = 15;
 export const WHO_PM25_ANNUAL_GUIDELINE = 5;
 
-const PM25_BREAKPOINTS: ReadonlyArray<[number, number, number, number]> = [
+const PM25_BREAKPOINTS: readonly [number, number, number, number][] = [
   [0, 9.0, 0, 50],
   [9.1, 35.4, 51, 100],
   [35.5, 55.4, 101, 150],
@@ -13,7 +16,7 @@ const PM25_BREAKPOINTS: ReadonlyArray<[number, number, number, number]> = [
   [225.5, 500.4, 301, 500],
 ];
 
-const BAND_THRESHOLDS: ReadonlyArray<{ max: number; band: AqiBand }> = [
+const BAND_THRESHOLDS: readonly { max: number; band: AqiBand }[] = [
   { max: 50, band: 'good' },
   { max: 100, band: 'moderate' },
   { max: 150, band: 'usg' },

@@ -1,3 +1,6 @@
+/**
+ * Server-side city AQI lookup client orchestrating 60-min LRU cache, geocoding, and fallback chain.
+ */
 import { classifyAqi, whoGuidelineRatio } from '@/lib/aqi/bands';
 import { buildBaselineReading } from '@/lib/aqi/baseline';
 import { DEFAULT_AQI_TTL_MS, TtlCache } from '@/lib/providers/cache';
@@ -24,6 +27,14 @@ function readEnvKeys(): ProviderEnvKeys {
   };
 }
 
+function seedCityBaseline(
+  baseline: AqiReading,
+  geo: { lat: number; lon: number; country?: string } | null,
+): AqiReading {
+  if (!geo) return baseline;
+  return { ...baseline, lat: geo.lat, lon: geo.lon, country: geo.country ?? baseline.country };
+}
+
 function finalizeReading(
   merged: AqiReading,
   used: ProviderName[],
@@ -44,7 +55,7 @@ function finalizeReading(
   };
 }
 
-/** Fetches live AQI with 60-min caching and multi-provider fallback across IQAir, OpenWeather, OpenAQ, AirNow, and baseline. */
+/** Fetches live AQI with 60-min caching and fallback across IQAir, OpenWeather, OpenAQ, AirNow, and baseline. */
 export async function fetchCityAqi(
   rawCity: string,
   options: FetchCityAqiOptions = {},
@@ -58,11 +69,11 @@ export async function fetchCityAqi(
   const fetchFn = options.fetchFn ?? fetch;
   const baseline = buildBaselineReading(cleanCity);
   const geo = await geocodeOpenWeather(cleanCity, keys.openweather, fetchFn);
-  const seeded = geo
-    ? { ...baseline, lat: geo.lat, lon: geo.lon, country: geo.country ?? baseline.country }
-    : baseline;
-
-  const { merged, used, failed } = await runProviderChain(seeded, keys, fetchFn);
+  const { merged, used, failed } = await runProviderChain(
+    seedCityBaseline(baseline, geo),
+    keys,
+    fetchFn,
+  );
   const result = finalizeReading(merged, used, failed, baseline.note);
   cache.set(cleanCity, result);
   return result;

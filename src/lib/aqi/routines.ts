@@ -1,3 +1,6 @@
+/**
+ * Persona routine dispatcher selecting family, commuter, or community action builders.
+ */
 import { buildCommuterRoutines } from '@/lib/aqi/routineCommuter';
 import { buildCommunityRoutines } from '@/lib/aqi/routineCommunity';
 import { buildFamilyRoutines } from '@/lib/aqi/routineFamily';

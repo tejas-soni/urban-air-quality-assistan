@@ -1,3 +1,6 @@
+/**
+ * Deterministic SHA-256 cache-key generator ensuring opaque, fixed-length response keys.
+ */
 import { createHash } from 'node:crypto';
 
 /** Produces a fixed-length SHA-256 hex key for deterministic server-side caching. */

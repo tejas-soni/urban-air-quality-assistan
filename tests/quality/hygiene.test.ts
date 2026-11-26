@@ -25,10 +25,15 @@ const REQUIRED_DOCS = [
   '.env.example',
   '.editorconfig',
   '.github/workflows/ci.yml',
+  '.github/workflows/codeql.yml',
+  '.github/dependabot.yml',
   'public/llms.txt',
   'public/robots.txt',
   'public/sitemap.xml',
   'public/.well-known/ard.json',
+  'public/.well-known/security.txt',
+  'src/app/error.tsx',
+  'src/app/not-found.tsx',
 ];
 
 describe('repository hygiene and architectural invariants', () => {

@@ -1,3 +1,6 @@
+/**
+ * Quantified routine action card pairing guidance steps with WHO/EPA impact citations.
+ */
 import { CheckCircle2, FileText } from 'lucide-react';
 import type { RoutineRecommendation } from '@/lib/types';
 
@@ -5,6 +8,7 @@ interface RoutineCardProps {
   routine: RoutineRecommendation;
 }
 
+/** Renders a single daily routine recommendation card and cited impact summary. */
 export function RoutineCard({ routine }: RoutineCardProps) {
   return (
     <article className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">

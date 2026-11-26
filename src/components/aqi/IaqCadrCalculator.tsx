@@ -1,10 +1,73 @@
 'use client';
 
+/**
+ * Interactive Room CADR & DIY Corsi-Rosenthal mass-balance clearance calculator (4.8+ ACH standard).
+ */
 import { Wind } from 'lucide-react';
 import { useState } from 'react';
+import { CadrResultsGrid } from '@/components/aqi/CadrResults';
 import { buildCadrSizingPlan } from '@/lib/aqi/cadr';
 
-/** Interactive Room CADR & DIY Corsi-Rosenthal clearance calculator (4.8+ ACH target). */
+interface CadrInputsProps {
+  areaSqM: number;
+  heightM: number;
+  mode: 'diy-cr' | 'hepa';
+  onArea: (val: number) => void;
+  onHeight: (val: number) => void;
+  onMode: (val: 'diy-cr' | 'hepa') => void;
+}
+
+function CadrInputs({ areaSqM, heightM, mode, onArea, onHeight, onMode }: CadrInputsProps) {
+  return (
+    <div className="mt-4 grid gap-4 sm:grid-cols-3">
+      <div>
+        <label htmlFor="cadr-area" className="block text-sm font-semibold text-slate-800">
+          Room floor area (m²)
+        </label>
+        <input
+          id="cadr-area"
+          type="number"
+          min={4}
+          max={500}
+          value={areaSqM}
+          onChange={(e) => onArea(Number(e.target.value) || 22)}
+          className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
+        />
+      </div>
+      <div>
+        <label htmlFor="cadr-height" className="block text-sm font-semibold text-slate-800">
+          Ceiling height (m)
+        </label>
+        <input
+          id="cadr-height"
+          type="number"
+          min={2}
+          max={6}
+          step={0.1}
+          value={heightM}
+          onChange={(e) => onHeight(Number(e.target.value) || 2.8)}
+          className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
+        />
+      </div>
+      <div>
+        <label htmlFor="cadr-mode" className="block text-sm font-semibold text-slate-800">
+          Filtration method
+        </label>
+        <select
+          id="cadr-mode"
+          value={mode}
+          onChange={(e) => onMode(e.target.value === 'hepa' ? 'hepa' : 'diy-cr')}
+          className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
+        >
+          <option value="diy-cr">DIY Corsi-Rosenthal (4x MERV-13)</option>
+          <option value="hepa">Commercial True HEPA H13</option>
+        </select>
+      </div>
+    </div>
+  );
+}
+
+/** Interactive Room CADR and clean-room clearance duration calculator. */
 export function IaqCadrCalculator() {
   const [areaSqM, setAreaSqM] = useState(22);
   const [heightM, setHeightM] = useState(2.8);
@@ -28,83 +91,15 @@ export function IaqCadrCalculator() {
         </span>
       </div>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-3">
-        <div>
-          <label htmlFor="cadr-area" className="block text-sm font-semibold text-slate-800">
-            Room floor area (m²)
-          </label>
-          <input
-            id="cadr-area"
-            type="number"
-            min={4}
-            max={500}
-            value={areaSqM}
-            onChange={(e) => setAreaSqM(Number(e.target.value) || 22)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="cadr-height" className="block text-sm font-semibold text-slate-800">
-            Ceiling height (m)
-          </label>
-          <input
-            id="cadr-height"
-            type="number"
-            min={2}
-            max={6}
-            step={0.1}
-            value={heightM}
-            onChange={(e) => setHeightM(Number(e.target.value) || 2.8)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="cadr-mode" className="block text-sm font-semibold text-slate-800">
-            Filtration method
-          </label>
-          <select
-            id="cadr-mode"
-            value={mode}
-            onChange={(e) => setMode(e.target.value === 'hepa' ? 'hepa' : 'diy-cr')}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          >
-            <option value="diy-cr">DIY Corsi-Rosenthal (4x MERV-13)</option>
-            <option value="hepa">Commercial True HEPA H13</option>
-          </select>
-        </div>
-      </div>
-
-      <div aria-live="polite" className="mt-5 grid gap-3 sm:grid-cols-4">
-        <div className="rounded-xl bg-slate-50 p-3">
-          <div className="text-xs font-semibold text-slate-600">Room volume</div>
-          <div className="text-lg font-bold text-slate-900">{plan.volumeM3} m³</div>
-        </div>
-        <div className="rounded-xl bg-slate-50 p-3">
-          <div className="text-xs font-semibold text-slate-600">Target CADR (4.8 ACH)</div>
-          <div className="text-lg font-bold text-slate-900">{plan.requiredCadrM3h} m³/h</div>
-        </div>
-        <div className="rounded-xl bg-slate-50 p-3">
-          <div className="text-xs font-semibold text-slate-600">Achieved rate</div>
-          <div className="text-lg font-bold text-sky-800">{plan.achievedAch} ACH</div>
-        </div>
-        <div className="rounded-xl bg-emerald-50 p-3">
-          <div className="text-xs font-semibold text-emerald-900">80% PM2.5 drop</div>
-          <div className="text-lg font-bold text-emerald-950">~{plan.clearanceMinutes80} min</div>
-        </div>
-      </div>
-
-      <ul
-        className="mt-4 flex flex-wrap gap-2 text-xs text-slate-700"
-        aria-label="CADR factor sources"
-      >
-        {plan.provenance.map((p) => (
-          <li key={p.label} className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1">
-            <strong className="uppercase text-sky-900">[{p.kind}]</strong> {p.label} ({p.source})
-          </li>
-        ))}
-      </ul>
+      <CadrInputs
+        areaSqM={areaSqM}
+        heightM={heightM}
+        mode={mode}
+        onArea={setAreaSqM}
+        onHeight={setHeightM}
+        onMode={setMode}
+      />
+      <CadrResultsGrid plan={plan} />
     </section>
   );
 }

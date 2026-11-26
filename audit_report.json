@@ -1,87 +1,47 @@
 [
   {
-    "file": "src/components/onboarding/OnboardingForm.tsx",
-    "loc": 161,
-    "functions": 2,
-    "conditionals": 3,
-    "useEffects": 0,
-    "jsxElements": 46,
-    "maxDepth": 3,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/components/chat/ChatPanel.tsx",
-    "loc": 125,
-    "functions": 4,
-    "conditionals": 8,
-    "useEffects": 0,
-    "jsxElements": 21,
-    "maxDepth": 4,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/lib/aqi/citySeeds.ts",
-    "loc": 124,
-    "functions": 0,
-    "conditionals": 0,
-    "useEffects": 0,
-    "jsxElements": 1,
-    "maxDepth": 1,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/components/aqi/LandingView.tsx",
-    "loc": 123,
-    "functions": 3,
-    "conditionals": 1,
-    "useEffects": 0,
-    "jsxElements": 28,
-    "maxDepth": 5,
-    "risk": "MEDIUM"
-  },
-  {
     "file": "src/components/aqi/CommuteExposureTable.tsx",
-    "loc": 115,
-    "functions": 2,
+    "loc": 116,
+    "functions": 5,
     "conditionals": 3,
     "useEffects": 0,
-    "jsxElements": 33,
+    "jsxElements": 30,
     "maxDepth": 3,
     "risk": "LOW"
   },
   {
-    "file": "src/components/aqi/DashboardView.tsx",
-    "loc": 113,
-    "functions": 4,
-    "conditionals": 5,
-    "useEffects": 0,
-    "jsxElements": 23,
-    "maxDepth": 5,
-    "risk": "LOW"
-  },
-  {
-    "file": "src/components/community/CommunityPlanner.tsx",
-    "loc": 109,
-    "functions": 2,
-    "conditionals": 9,
-    "useEffects": 0,
-    "jsxElements": 17,
-    "maxDepth": 4,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/components/community/ShareCard.tsx",
-    "loc": 109,
+    "file": "src/components/onboarding/OnboardingForm.tsx",
+    "loc": 116,
     "functions": 4,
     "conditionals": 2,
     "useEffects": 0,
-    "jsxElements": 36,
+    "jsxElements": 18,
     "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/ForecastChart.tsx",
+    "loc": 114,
+    "functions": 6,
+    "conditionals": 6,
+    "useEffects": 0,
+    "jsxElements": 21,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/chat/ChatPanel.tsx",
+    "loc": 111,
+    "functions": 5,
+    "conditionals": 5,
+    "useEffects": 0,
+    "jsxElements": 18,
+    "maxDepth": 4,
     "risk": "LOW"
   },
   {
     "file": "src/lib/types.ts",
-    "loc": 108,
+    "loc": 111,
     "functions": 0,
     "conditionals": 0,
     "useEffects": 0,
@@ -90,98 +50,118 @@
     "risk": "LOW"
   },
   {
-    "file": "src/lib/aqi/commuteCompare.ts",
-    "loc": 105,
-    "functions": 4,
-    "conditionals": 12,
-    "useEffects": 0,
-    "jsxElements": 2,
-    "maxDepth": 3,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/components/aqi/IaqCadrCalculator.tsx",
-    "loc": 102,
-    "functions": 2,
+    "file": "src/components/aqi/DashboardView.tsx",
+    "loc": 108,
+    "functions": 5,
     "conditionals": 3,
-    "useEffects": 0,
-    "jsxElements": 34,
-    "maxDepth": 3,
-    "risk": "LOW"
-  },
-  {
-    "file": "src/components/aqi/ForecastChart.tsx",
-    "loc": 99,
-    "functions": 4,
-    "conditionals": 6,
-    "useEffects": 0,
-    "jsxElements": 19,
+    "useEffects": 1,
+    "jsxElements": 25,
     "maxDepth": 4,
     "risk": "LOW"
   },
   {
-    "file": "src/components/aqi/InversionBanner.tsx",
-    "loc": 90,
-    "functions": 1,
-    "conditionals": 7,
+    "file": "src/lib/aqi/commuteCompare.ts",
+    "loc": 108,
+    "functions": 4,
+    "conditionals": 12,
     "useEffects": 0,
-    "jsxElements": 16,
-    "maxDepth": 3,
-    "risk": "LOW"
-  },
-  {
-    "file": "src/lib/providers/http.ts",
-    "loc": 89,
-    "functions": 6,
-    "conditionals": 7,
-    "useEffects": 0,
-    "jsxElements": 12,
-    "maxDepth": 3,
-    "risk": "LOW"
-  },
-  {
-    "file": "src/lib/providers/chain.ts",
-    "loc": 83,
-    "functions": 3,
-    "conditionals": 10,
-    "useEffects": 0,
-    "jsxElements": 4,
+    "jsxElements": 1,
     "maxDepth": 3,
     "risk": "MEDIUM"
   },
   {
     "file": "src/app/api/chat/route.ts",
-    "loc": 82,
-    "functions": 5,
-    "conditionals": 9,
+    "loc": 105,
+    "functions": 4,
+    "conditionals": 8,
     "useEffects": 0,
     "jsxElements": 2,
-    "maxDepth": 3,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/lib/agents/numberFirewall.ts",
-    "loc": 82,
-    "functions": 5,
-    "conditionals": 4,
-    "useEffects": 0,
-    "jsxElements": 6,
     "maxDepth": 3,
     "risk": "LOW"
   },
   {
-    "file": "src/lib/aqi/cadr.ts",
-    "loc": 82,
-    "functions": 4,
-    "conditionals": 12,
+    "file": "src/components/community/CommunityPlanForm.tsx",
+    "loc": 105,
+    "functions": 2,
+    "conditionals": 3,
     "useEffects": 0,
-    "jsxElements": 0,
-    "maxDepth": 3,
+    "jsxElements": 16,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/agents/chatFallbackStream.ts",
+    "loc": 104,
+    "functions": 4,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 3,
+    "maxDepth": 5,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/http.ts",
+    "loc": 103,
+    "functions": 7,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 11,
+    "maxDepth": 4,
     "risk": "MEDIUM"
   },
   {
+    "file": "src/components/aqi/IaqCadrCalculator.tsx",
+    "loc": 99,
+    "functions": 2,
+    "conditionals": 3,
+    "useEffects": 0,
+    "jsxElements": 20,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/schemas.ts",
+    "loc": 98,
+    "functions": 0,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/community/ShareCardSections.tsx",
+    "loc": 95,
+    "functions": 4,
+    "conditionals": 2,
+    "useEffects": 0,
+    "jsxElements": 30,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/onboarding/OnboardingNumericFlags.tsx",
+    "loc": 89,
+    "functions": 2,
+    "conditionals": 2,
+    "useEffects": 0,
+    "jsxElements": 15,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/InversionBanner.tsx",
+    "loc": 87,
+    "functions": 2,
+    "conditionals": 6,
+    "useEffects": 0,
+    "jsxElements": 13,
+    "maxDepth": 5,
+    "risk": "LOW"
+  },
+  {
     "file": "src/components/layout/Navbar.tsx",
-    "loc": 81,
+    "loc": 85,
     "functions": 3,
     "conditionals": 3,
     "useEffects": 0,
@@ -190,18 +170,58 @@
     "risk": "LOW"
   },
   {
-    "file": "src/lib/agents/chatFallbackStream.ts",
-    "loc": 79,
-    "functions": 2,
+    "file": "src/lib/agents/numberFirewall.ts",
+    "loc": 85,
+    "functions": 6,
     "conditionals": 4,
     "useEffects": 0,
-    "jsxElements": 2,
-    "maxDepth": 5,
+    "jsxElements": 6,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/cadr.ts",
+    "loc": 85,
+    "functions": 4,
+    "conditionals": 12,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/components/aqi/CitySearchForm.tsx",
+    "loc": 84,
+    "functions": 5,
+    "conditionals": 3,
+    "useEffects": 0,
+    "jsxElements": 13,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/community.ts",
+    "loc": 80,
+    "functions": 2,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/onboarding/OnboardingFields.tsx",
+    "loc": 79,
+    "functions": 3,
+    "conditionals": 2,
+    "useEffects": 0,
+    "jsxElements": 17,
+    "maxDepth": 3,
     "risk": "LOW"
   },
   {
     "file": "src/lib/aqi/bandData.ts",
-    "loc": 76,
+    "loc": 79,
     "functions": 0,
     "conditionals": 0,
     "useEffects": 0,
@@ -210,18 +230,8 @@
     "risk": "LOW"
   },
   {
-    "file": "src/components/aqi/CitySearchForm.tsx",
-    "loc": 75,
-    "functions": 4,
-    "conditionals": 3,
-    "useEffects": 0,
-    "jsxElements": 12,
-    "maxDepth": 4,
-    "risk": "LOW"
-  },
-  {
     "file": "src/lib/aqi/baseline.ts",
-    "loc": 75,
+    "loc": 78,
     "functions": 6,
     "conditionals": 5,
     "useEffects": 0,
@@ -231,7 +241,7 @@
   },
   {
     "file": "src/components/aqi/AqiCard.tsx",
-    "loc": 71,
+    "loc": 75,
     "functions": 1,
     "conditionals": 5,
     "useEffects": 0,
@@ -240,8 +250,48 @@
     "risk": "LOW"
   },
   {
+    "file": "src/lib/http/guard.ts",
+    "loc": 73,
+    "functions": 4,
+    "conditionals": 10,
+    "useEffects": 0,
+    "jsxElements": 2,
+    "maxDepth": 5,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/providers/client.ts",
+    "loc": 72,
+    "functions": 4,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 3,
+    "maxDepth": 2,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/components/community/CommunityPlanner.tsx",
+    "loc": 71,
+    "functions": 3,
+    "conditionals": 8,
+    "useEffects": 1,
+    "jsxElements": 5,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/LandingView.tsx",
+    "loc": 70,
+    "functions": 3,
+    "conditionals": 3,
+    "useEffects": 1,
+    "jsxElements": 13,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
     "file": "src/lib/aqi/routineFamily.ts",
-    "loc": 65,
+    "loc": 69,
     "functions": 3,
     "conditionals": 12,
     "useEffects": 0,
@@ -250,38 +300,38 @@
     "risk": "MEDIUM"
   },
   {
-    "file": "src/lib/agents/prompts.ts",
-    "loc": 62,
-    "functions": 3,
-    "conditionals": 9,
+    "file": "src/components/aqi/PersonaCardGrid.tsx",
+    "loc": 67,
+    "functions": 2,
+    "conditionals": 0,
     "useEffects": 0,
-    "jsxElements": 1,
+    "jsxElements": 19,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/rag/parser.ts",
+    "loc": 67,
+    "functions": 7,
+    "conditionals": 11,
+    "useEffects": 0,
+    "jsxElements": 4,
     "maxDepth": 3,
     "risk": "MEDIUM"
   },
   {
-    "file": "src/lib/providers/client.ts",
-    "loc": 61,
-    "functions": 3,
-    "conditionals": 9,
+    "file": "src/lib/providers/chain.ts",
+    "loc": 65,
+    "functions": 2,
+    "conditionals": 6,
     "useEffects": 0,
-    "jsxElements": 3,
-    "maxDepth": 2,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/lib/aqi/community.ts",
-    "loc": 60,
-    "functions": 1,
-    "conditionals": 1,
-    "useEffects": 0,
-    "jsxElements": 0,
-    "maxDepth": 2,
+    "jsxElements": 4,
+    "maxDepth": 3,
     "risk": "LOW"
   },
   {
     "file": "src/lib/providers/cache.ts",
-    "loc": 59,
+    "loc": 62,
     "functions": 1,
     "conditionals": 5,
     "useEffects": 0,
@@ -290,8 +340,38 @@
     "risk": "LOW"
   },
   {
+    "file": "src/lib/agents/rateLimit.ts",
+    "loc": 61,
+    "functions": 0,
+    "conditionals": 8,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/openWeatherMapper.ts",
+    "loc": 60,
+    "functions": 5,
+    "conditionals": 10,
+    "useEffects": 0,
+    "jsxElements": 4,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/agents/prompts.ts",
+    "loc": 59,
+    "functions": 3,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
     "file": "src/lib/aqi/impact.ts",
-    "loc": 56,
+    "loc": 59,
     "functions": 2,
     "conditionals": 9,
     "useEffects": 0,
@@ -300,18 +380,18 @@
     "risk": "MEDIUM"
   },
   {
-    "file": "src/lib/rag/parser.ts",
-    "loc": 53,
-    "functions": 3,
-    "conditionals": 12,
+    "file": "src/lib/http/csp.ts",
+    "loc": 58,
+    "functions": 1,
+    "conditionals": 5,
     "useEffects": 0,
-    "jsxElements": 3,
-    "maxDepth": 3,
-    "risk": "MEDIUM"
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
   },
   {
     "file": "src/lib/rag/score.ts",
-    "loc": 53,
+    "loc": 58,
     "functions": 3,
     "conditionals": 10,
     "useEffects": 0,
@@ -320,48 +400,28 @@
     "risk": "MEDIUM"
   },
   {
-    "file": "src/lib/aqi/bands.ts",
-    "loc": 52,
-    "functions": 4,
-    "conditionals": 7,
+    "file": "src/lib/agents/liveFirewall.ts",
+    "loc": 56,
+    "functions": 3,
+    "conditionals": 6,
     "useEffects": 0,
-    "jsxElements": 1,
-    "maxDepth": 3,
+    "jsxElements": 5,
+    "maxDepth": 4,
     "risk": "LOW"
   },
   {
     "file": "src/lib/aqi/inversion.ts",
-    "loc": 52,
-    "functions": 1,
-    "conditionals": 10,
+    "loc": 56,
+    "functions": 2,
+    "conditionals": 7,
     "useEffects": 0,
     "jsxElements": 0,
     "maxDepth": 4,
-    "risk": "MEDIUM"
-  },
-  {
-    "file": "src/lib/providers/openWeatherMapper.ts",
-    "loc": 51,
-    "functions": 4,
-    "conditionals": 8,
-    "useEffects": 0,
-    "jsxElements": 2,
-    "maxDepth": 3,
-    "risk": "LOW"
-  },
-  {
-    "file": "src/lib/aqi/commuteImpact.ts",
-    "loc": 50,
-    "functions": 2,
-    "conditionals": 5,
-    "useEffects": 0,
-    "jsxElements": 1,
-    "maxDepth": 3,
     "risk": "LOW"
   },
   {
     "file": "src/components/layout/useProfile.ts",
-    "loc": 49,
+    "loc": 55,
     "functions": 7,
     "conditionals": 1,
     "useEffects": 0,
@@ -370,18 +430,38 @@
     "risk": "LOW"
   },
   {
-    "file": "src/lib/agents/rateLimit.ts",
-    "loc": 48,
-    "functions": 0,
-    "conditionals": 3,
+    "file": "src/lib/aqi/bands.ts",
+    "loc": 55,
+    "functions": 4,
+    "conditionals": 7,
     "useEffects": 0,
     "jsxElements": 1,
-    "maxDepth": 4,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/community/ShareCard.tsx",
+    "loc": 54,
+    "functions": 4,
+    "conditionals": 2,
+    "useEffects": 1,
+    "jsxElements": 10,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/commuteImpact.ts",
+    "loc": 53,
+    "functions": 2,
+    "conditionals": 5,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
     "risk": "LOW"
   },
   {
     "file": "src/lib/aqi/routineCommuter.ts",
-    "loc": 47,
+    "loc": 51,
     "functions": 1,
     "conditionals": 6,
     "useEffects": 0,
@@ -390,18 +470,28 @@
     "risk": "LOW"
   },
   {
-    "file": "src/lib/schemas.ts",
-    "loc": 47,
-    "functions": 0,
-    "conditionals": 0,
+    "file": "src/app/error.tsx",
+    "loc": 49,
+    "functions": 1,
+    "conditionals": 1,
     "useEffects": 0,
-    "jsxElements": 0,
+    "jsxElements": 11,
     "maxDepth": 2,
     "risk": "LOW"
   },
   {
+    "file": "src/lib/agents/fallback.ts",
+    "loc": 49,
+    "functions": 3,
+    "conditionals": 8,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
     "file": "src/lib/agents/tools.ts",
-    "loc": 46,
+    "loc": 49,
     "functions": 5,
     "conditionals": 1,
     "useEffects": 0,
@@ -411,7 +501,7 @@
   },
   {
     "file": "src/components/chat/MessageBubble.tsx",
-    "loc": 43,
+    "loc": 47,
     "functions": 2,
     "conditionals": 5,
     "useEffects": 0,
@@ -420,28 +510,38 @@
     "risk": "LOW"
   },
   {
-    "file": "src/lib/http/guard.ts",
-    "loc": 43,
-    "functions": 2,
-    "conditionals": 6,
+    "file": "src/lib/persona/presets.ts",
+    "loc": 47,
+    "functions": 0,
+    "conditionals": 0,
     "useEffects": 0,
     "jsxElements": 1,
-    "maxDepth": 4,
+    "maxDepth": 1,
     "risk": "LOW"
   },
   {
-    "file": "src/lib/agents/fallback.ts",
-    "loc": 38,
+    "file": "src/lib/aqi/scenario.ts",
+    "loc": 46,
     "functions": 1,
-    "conditionals": 7,
+    "conditionals": 1,
     "useEffects": 0,
     "jsxElements": 1,
-    "maxDepth": 2,
+    "maxDepth": 3,
     "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/aqAirNowMapper.ts",
+    "loc": 46,
+    "functions": 4,
+    "conditionals": 10,
+    "useEffects": 0,
+    "jsxElements": 5,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
   },
   {
     "file": "src/lib/storage/profile.ts",
-    "loc": 38,
+    "loc": 41,
     "functions": 3,
     "conditionals": 4,
     "useEffects": 0,
@@ -451,7 +551,7 @@
   },
   {
     "file": "src/components/dashboard/RoutineCard.tsx",
-    "loc": 36,
+    "loc": 40,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
@@ -460,38 +560,68 @@
     "risk": "LOW"
   },
   {
+    "file": "src/lib/aqi/citySeeds.ts",
+    "loc": 40,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/CadrResults.tsx",
+    "loc": 39,
+    "functions": 2,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 16,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
     "file": "src/lib/rag/search.ts",
-    "loc": 36,
+    "loc": 39,
     "functions": 4,
     "conditionals": 2,
     "useEffects": 0,
-    "jsxElements": 1,
+    "jsxElements": 0,
     "maxDepth": 2,
     "risk": "LOW"
   },
   {
-    "file": "src/lib/providers/aqAirNowMapper.ts",
-    "loc": 35,
-    "functions": 4,
-    "conditionals": 9,
+    "file": "src/app/not-found.tsx",
+    "loc": 38,
+    "functions": 1,
+    "conditionals": 0,
     "useEffects": 0,
-    "jsxElements": 3,
-    "maxDepth": 3,
-    "risk": "MEDIUM"
+    "jsxElements": 10,
+    "maxDepth": 1,
+    "risk": "LOW"
   },
   {
     "file": "src/lib/rag/loader.ts",
-    "loc": 35,
+    "loc": 38,
     "functions": 2,
     "conditionals": 4,
     "useEffects": 0,
-    "jsxElements": 1,
+    "jsxElements": 0,
     "maxDepth": 3,
     "risk": "LOW"
   },
   {
+    "file": "src/lib/agents/promptGuard.ts",
+    "loc": 34,
+    "functions": 2,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
     "file": "src/lib/aqi/routineCommunity.ts",
-    "loc": 30,
+    "loc": 34,
     "functions": 1,
     "conditionals": 1,
     "useEffects": 0,
@@ -500,8 +630,18 @@
     "risk": "LOW"
   },
   {
+    "file": "src/components/chat/ChatTranscript.tsx",
+    "loc": 33,
+    "functions": 1,
+    "conditionals": 3,
+    "useEffects": 0,
+    "jsxElements": 4,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
     "file": "src/lib/providers/mappers.ts",
-    "loc": 30,
+    "loc": 33,
     "functions": 2,
     "conditionals": 7,
     "useEffects": 0,
@@ -510,8 +650,18 @@
     "risk": "LOW"
   },
   {
+    "file": "src/proxy.ts",
+    "loc": 33,
+    "functions": 1,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
     "file": "src/components/aqi/AqiBadge.tsx",
-    "loc": 28,
+    "loc": 32,
     "functions": 1,
     "conditionals": 1,
     "useEffects": 0,
@@ -520,18 +670,18 @@
     "risk": "LOW"
   },
   {
-    "file": "src/lib/http/originGuard.ts",
-    "loc": 27,
-    "functions": 2,
-    "conditionals": 7,
+    "file": "src/lib/api/aqiClient.ts",
+    "loc": 31,
+    "functions": 1,
+    "conditionals": 3,
     "useEffects": 0,
-    "jsxElements": 0,
-    "maxDepth": 3,
+    "jsxElements": 1,
+    "maxDepth": 5,
     "risk": "LOW"
   },
   {
     "file": "src/app/layout.tsx",
-    "loc": 24,
+    "loc": 30,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
@@ -540,28 +690,18 @@
     "risk": "LOW"
   },
   {
-    "file": "src/components/layout/Footer.tsx",
-    "loc": 24,
-    "functions": 1,
-    "conditionals": 0,
-    "useEffects": 0,
-    "jsxElements": 7,
-    "maxDepth": 1,
-    "risk": "LOW"
-  },
-  {
-    "file": "src/test/setup.ts",
-    "loc": 22,
-    "functions": 1,
-    "conditionals": 4,
+    "file": "src/lib/http/originGuard.ts",
+    "loc": 30,
+    "functions": 3,
+    "conditionals": 7,
     "useEffects": 0,
     "jsxElements": 0,
     "maxDepth": 3,
     "risk": "LOW"
   },
   {
-    "file": "src/app/community/page.tsx",
-    "loc": 21,
+    "file": "src/app/global-error.tsx",
+    "loc": 29,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
@@ -570,8 +710,58 @@
     "risk": "LOW"
   },
   {
+    "file": "src/components/layout/Footer.tsx",
+    "loc": 28,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 7,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/agents/messageNormalize.ts",
+    "loc": 27,
+    "functions": 3,
+    "conditionals": 6,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/community/page.tsx",
+    "loc": 25,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 6,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/logger.ts",
+    "loc": 25,
+    "functions": 3,
+    "conditionals": 5,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/test/setup.ts",
+    "loc": 25,
+    "functions": 3,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
     "file": "src/app/api/aqi/route.ts",
-    "loc": 20,
+    "loc": 24,
     "functions": 1,
     "conditionals": 3,
     "useEffects": 0,
@@ -581,17 +771,27 @@
   },
   {
     "file": "src/components/layout/AppShell.tsx",
-    "loc": 20,
+    "loc": 24,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
-    "jsxElements": 4,
+    "jsxElements": 5,
     "maxDepth": 2,
     "risk": "LOW"
   },
   {
+    "file": "src/app/chat/page.tsx",
+    "loc": 22,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 6,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
     "file": "src/lib/aqi/routines.ts",
-    "loc": 19,
+    "loc": 22,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
@@ -600,8 +800,8 @@
     "risk": "LOW"
   },
   {
-    "file": "src/app/chat/page.tsx",
-    "loc": 18,
+    "file": "src/app/onboarding/page.tsx",
+    "loc": 21,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
@@ -610,18 +810,18 @@
     "risk": "LOW"
   },
   {
-    "file": "src/app/onboarding/page.tsx",
-    "loc": 17,
-    "functions": 1,
-    "conditionals": 0,
+    "file": "src/lib/providers/jsonHelpers.ts",
+    "loc": 19,
+    "functions": 3,
+    "conditionals": 9,
     "useEffects": 0,
-    "jsxElements": 6,
+    "jsxElements": 1,
     "maxDepth": 1,
-    "risk": "LOW"
+    "risk": "MEDIUM"
   },
   {
     "file": "src/app/dashboard/page.tsx",
-    "loc": 12,
+    "loc": 16,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
@@ -631,7 +831,7 @@
   },
   {
     "file": "src/app/page.tsx",
-    "loc": 12,
+    "loc": 16,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,
@@ -640,18 +840,28 @@
     "risk": "LOW"
   },
   {
-    "file": "src/lib/providers/jsonHelpers.ts",
-    "loc": 9,
-    "functions": 3,
-    "conditionals": 5,
+    "file": "src/lib/aqi/diurnalSlots.ts",
+    "loc": 13,
+    "functions": 0,
+    "conditionals": 0,
     "useEffects": 0,
-    "jsxElements": 2,
+    "jsxElements": 0,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/http/clientIp.ts",
+    "loc": 11,
+    "functions": 1,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 0,
     "maxDepth": 1,
     "risk": "LOW"
   },
   {
     "file": "src/lib/providers/hash.ts",
-    "loc": 5,
+    "loc": 8,
     "functions": 1,
     "conditionals": 0,
     "useEffects": 0,

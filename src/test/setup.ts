@@ -1,10 +1,13 @@
+/**
+ * Vitest DOM setup registering jest-dom, vitest-axe matchers, and JSDOM browser shims.
+ */
 import '@testing-library/jest-dom/vitest';
 import * as matchers from 'vitest-axe/matchers';
 import { expect } from 'vitest';
 
 expect.extend(matchers);
 
-if (typeof window !== 'undefined' && !window.matchMedia) {
+if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: (query: string) => ({
@@ -20,6 +23,6 @@ if (typeof window !== 'undefined' && !window.matchMedia) {
   });
 }
 
-if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
+if (typeof Element !== 'undefined' && typeof Element.prototype.scrollIntoView !== 'function') {
   Element.prototype.scrollIntoView = () => undefined;
 }

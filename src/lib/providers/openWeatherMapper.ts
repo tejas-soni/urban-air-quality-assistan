@@ -1,8 +1,11 @@
+/**
+ * OpenWeather Air Pollution current + 5-day forecast payload normalizers.
+ */
 import { pm25ToUsAqi } from '@/lib/aqi/bands';
 import { asNum, asObj } from '@/lib/providers/jsonHelpers';
 import type { AqiReading } from '@/lib/types';
 
-function buildOpenWeatherDaily(items: unknown[]): AqiReading['forecast5d'] {
+function buildOpenWeatherDaily(items: readonly unknown[]): AqiReading['forecast5d'] {
   const buckets = new Map<string, number[]>();
   for (const raw of items.slice(0, 120)) {
     const row = asObj(raw);
@@ -25,9 +28,22 @@ function buildOpenWeatherDaily(items: unknown[]): AqiReading['forecast5d'] {
     });
 }
 
-function readForecast5d(forecastPayload: unknown): AqiReading['forecast5d'] {
-  const fcList = asObj(forecastPayload)?.list;
-  return Array.isArray(fcList) ? buildOpenWeatherDaily(fcList) : [];
+function readComponents(currentPayload: unknown): Record<string, unknown> | null {
+  const list = asObj(currentPayload)?.list;
+  const first = Array.isArray(list) ? asObj(list[0]) : null;
+  return asObj(first?.components);
+}
+
+function buildPollutants(
+  pm25: number,
+  components: Record<string, unknown>,
+): AqiReading['pollutants'] {
+  return {
+    pm25: Math.round(pm25 * 10) / 10,
+    pm10: asNum(components.pm10),
+    o3: asNum(components.o3),
+    no2: asNum(components.no2),
+  };
 }
 
 /** Normalizes OpenWeather Air Pollution API (current + 5-day forecast) payloads. */
@@ -35,21 +51,15 @@ export function normalizeOpenWeather(
   currentPayload: unknown,
   forecastPayload?: unknown,
 ): Partial<AqiReading> | null {
-  const list = asObj(currentPayload)?.list;
-  const first = Array.isArray(list) ? asObj(list[0]) : null;
-  const components = asObj(first?.components);
-  const pm25 = asNum(components?.pm2_5);
-  if (pm25 === null) return null;
+  const components = readComponents(currentPayload);
+  const pm25 = components ? asNum(components.pm2_5) : null;
+  if (pm25 === null || !components) return null;
 
-  const forecast5d = readForecast5d(forecastPayload);
+  const fcList = asObj(forecastPayload)?.list;
+  const forecast5d = Array.isArray(fcList) ? buildOpenWeatherDaily(fcList) : [];
   return {
     aqi: pm25ToUsAqi(pm25),
-    pollutants: {
-      pm25: Math.round(pm25 * 10) / 10,
-      pm10: asNum(components?.pm10),
-      o3: asNum(components?.o3),
-      no2: asNum(components?.no2),
-    },
+    pollutants: buildPollutants(pm25, components),
     ...(forecast5d.length > 0 ? { forecast5d } : {}),
   };
 }

@@ -1,6 +1,10 @@
+/**
+ * Cache-backed public GET /api/aqi endpoint validating city queries via CityQuerySchema.
+ */
 import { fetchCityAqi } from '@/lib/providers/client';
 import { CityQuerySchema } from '@/lib/schemas';
 
+/** Returns live or 60-minute cached AQI telemetry and forecasts for a requested urban city. */
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);
   const rawCity = searchParams.get('city') ?? 'New Delhi';

@@ -1,3 +1,6 @@
+/**
+ * Accessible US EPA AQI category color tokens, non-color icons, and health advisories.
+ */
 import type { AqiBand, AqiBandInfo } from '@/lib/types';
 
 export const BAND_META: Record<AqiBand, AqiBandInfo> = {

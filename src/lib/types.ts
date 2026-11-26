@@ -1,3 +1,6 @@
+/**
+ * Core domain types shared across AQI providers, pure calculation engines, RAG search, and UI views.
+ */
 export type Persona = 'family' | 'commuter' | 'community';
 
 export type AqiBand = 'good' | 'moderate' | 'usg' | 'unhealthy' | 'very-unhealthy' | 'hazardous';
@@ -48,7 +51,7 @@ export interface AqiReading {
   pollutants: Pollutants;
   whoRatio: number;
   forecast24h: ForecastPoint[];
-  forecast5d: Array<{ dayLabel: string; minAqi: number; maxAqi: number; avgPm25: number }>;
+  forecast5d: { dayLabel: string; minAqi: number; maxAqi: number; avgPm25: number }[];
   providersUsed: ProviderName[];
   providersFailed: ProviderName[];
   cached: boolean;

@@ -14,28 +14,21 @@
     "total": 600
   },
   "testSummary": {
-    "unitAndComponentSuites": 30,
-    "unitAndComponentTests": 89,
+    "unitAndComponentSuites": 36,
+    "unitAndComponentTests": 106,
     "playwrightE2eRuns": 12,
-    "totalAssertions": 324,
+    "totalAssertions": 359,
     "passRatePercent": 100
   },
   "coverageSummary": {
-    "engineLib": { "lines": 99.44, "branches": 91.91, "functions": 100, "statements": 99.32 },
-    "global": { "lines": 98.47, "branches": 89.05, "functions": 96.5, "statements": 98.0 }
+    "engineLib": { "lines": 99.85, "branches": 91.63, "functions": 99.42, "statements": 99.17 },
+    "global": { "lines": 98.73, "branches": 88.47, "functions": 96.93, "statements": 97.9 }
   },
   "lighthouseDesktop": {
-    "performance": 100,
     "accessibility": 100,
     "bestPractices": 96,
-    "seo": 100,
-    "agenticBrowsing": 100,
-    "fcp": "0.4s",
-    "lcp": "0.4s",
-    "cls": "0",
-    "tbt": "30ms"
+    "seo": 100
   },
-  "complexityAudit": { "filesAudited": 67, "highRiskFiles": 0 },
-  "repoSizeMb": 0.81,
+  "complexityAudit": { "filesAudited": 88, "highRiskFiles": 0 },
   "knowledgeBaseDocs": 48
 }

@@ -15,21 +15,37 @@ concurrency:
 
 jobs:
   verify:
-    name: Lint, Format, Typecheck, Coverage, Audit & Build
+    name: Format, Lint, Typecheck, Coverage, Audit & Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run format:check
       - run: npm run verify
-      - run: npm audit --omit=dev --audit-level=high
+      - run: npm audit --audit-level=low
+
+  secrets:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Assert no hardcoded credentials exist
+        run: |
+          if grep -rEn "(AIza[0-9A-Za-z_-]{30,}|sk-[A-Za-z0-9]{20,})" \
+            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.mjs" --include="*.json" --include="*.md" src public docs; then
+            echo "::error::Potential credential detected"
+            exit 1
+          fi
 
   e2e:
     name: Playwright E2E & WCAG 2.2 AA Axe Scan
@@ -37,17 +53,17 @@ jobs:
     needs: verify
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
           name: playwright-traces

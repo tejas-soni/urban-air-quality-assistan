@@ -1,3 +1,6 @@
+/**
+ * Deterministic seasonal urban AQI baseline generator guaranteeing 100% offline/zero-key uptime.
+ */
 import { classifyAqi, pm25ToUsAqi, whoGuidelineRatio } from '@/lib/aqi/bands';
 import { CITY_SEEDS, DIURNAL_SLOTS, type CitySeed } from '@/lib/aqi/citySeeds';
 import type { AqiReading, ForecastPoint } from '@/lib/types';

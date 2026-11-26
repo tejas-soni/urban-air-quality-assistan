@@ -1,5 +1,8 @@
 'use client';
 
+/**
+ * Primary top navigation bar with route indicator and persistent persona switcher.
+ */
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Wind, Users, Car, Home } from 'lucide-react';
@@ -18,12 +21,13 @@ const NAV_LINKS = [
   { href: '/community', label: 'Community' },
 ];
 
-const PERSONAS: ReadonlyArray<{ id: Persona; label: string; Icon: typeof Home }> = [
+const PERSONAS: readonly { id: Persona; label: string; Icon: typeof Home }[] = [
   { id: 'family', label: 'Family', Icon: Home },
   { id: 'commuter', label: 'Commuter', Icon: Car },
   { id: 'community', label: 'Community', Icon: Users },
 ];
 
+/** Renders primary route links and active Family/Commuter/Community toggle buttons. */
 export function Navbar({ activePersona, onPersonaChange }: NavbarProps) {
   const pathname = usePathname();
 

@@ -1,3 +1,6 @@
+/**
+ * Ranked markdown knowledge-base search formatting excerpts and source citations.
+ */
 import { scoreDocument, tokenizeQuery } from '@/lib/rag/score';
 import type { KbCitation, KbDoc, Persona } from '@/lib/types';
 
@@ -16,7 +19,7 @@ function extractSnippet(doc: KbDoc): string {
 
 /** Ranks knowledge-base documents by keyword overlap, tags, impact relevance, and persona. */
 export function searchDocs(
-  docs: ReadonlyArray<KbDoc>,
+  docs: readonly KbDoc[],
   query: string,
   options: SearchOptions = {},
 ): KbCitation[] {

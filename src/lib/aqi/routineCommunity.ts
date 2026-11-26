@@ -1,6 +1,10 @@
+/**
+ * Community persona daily routine generator for school no-idling pledges and classroom clean air.
+ */
 import { estimateCommunityImpact, estimatePurifierImpact } from '@/lib/aqi/impact';
 import type { AqiReading, RoutineRecommendation, UserProfile } from '@/lib/types';
 
+/** Builds neighborhood and school group routines with quantified collective impact estimates. */
 export function buildCommunityRoutines(
   reading: AqiReading,
   profile: UserProfile,

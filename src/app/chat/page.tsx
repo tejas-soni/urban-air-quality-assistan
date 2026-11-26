@@ -1,6 +1,10 @@
+/**
+ * Dedicated streaming AI coach route grounded in live AQI tools and /content knowledge base.
+ */
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { AppShell } from '@/components/layout/AppShell';
 
+/** Renders the full-height AI Air Quality Assistant chat interface. */
 export default function ChatPage() {
   return (
     <AppShell>

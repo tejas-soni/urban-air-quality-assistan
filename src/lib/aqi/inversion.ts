@@ -1,3 +1,6 @@
+/**
+ * Thermal atmospheric boundary-layer inversion risk evaluator from lapse rate and wind speed.
+ */
 export interface InversionAssessment {
   severity: 'severe' | 'moderate' | 'none';
   isInversion: boolean;
@@ -7,6 +10,10 @@ export interface InversionAssessment {
   bestVentilationWindow: string;
 }
 
+function finiteOr(val: number, fallback: number, minVal = -Infinity): number {
+  return Number.isFinite(val) ? Math.max(minVal, val) : fallback;
+}
+
 /** Evaluates winter atmospheric thermal inversion trapping from surface/aloft temps and wind speed. */
 export function evaluateInversionRisk(
   tempGroundC: number,
@@ -14,11 +21,9 @@ export function evaluateInversionRisk(
   windSpeedKmh: number,
   aqi: number,
 ): InversionAssessment {
-  const safeGround = Number.isFinite(tempGroundC) ? tempGroundC : 8;
-  const safeAloft = Number.isFinite(tempAloftC) ? tempAloftC : 11;
-  const safeWind = Number.isFinite(windSpeedKmh) ? Math.max(0, windSpeedKmh) : 4;
-  const safeAqi = Number.isFinite(aqi) ? Math.max(0, aqi) : 50;
-  const lapseRateC = Math.round((safeAloft - safeGround) * 10) / 10;
+  const lapseRateC = Math.round((finiteOr(tempAloftC, 11) - finiteOr(tempGroundC, 8)) * 10) / 10;
+  const safeWind = finiteOr(windSpeedKmh, 4, 0);
+  const safeAqi = finiteOr(aqi, 50, 0);
 
   if ((lapseRateC > 2 && safeWind < 6) || safeAqi > 200) {
     return {
@@ -31,7 +36,6 @@ export function evaluateInversionRisk(
       bestVentilationWindow: '14:00–16:00 (brief check only if outdoor AQI drops)',
     };
   }
-
   if (lapseRateC > 0 && safeWind < 12) {
     return {
       severity: 'moderate',
@@ -43,7 +47,6 @@ export function evaluateInversionRisk(
       bestVentilationWindow: '13:00–16:00 (~40% lower outdoor PM2.5)',
     };
   }
-
   return {
     severity: 'none',
     isInversion: false,

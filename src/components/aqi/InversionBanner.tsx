@@ -1,9 +1,13 @@
 'use client';
 
+/**
+ * Thermal inversion warning banner and interactive atmospheric scenario selector.
+ */
 import { AlertTriangle, CloudFog, Sun } from 'lucide-react';
 import { evaluateInversionRisk } from '@/lib/aqi/inversion';
+import { SCENARIO_METEOROLOGY, type SmogScenario } from '@/lib/aqi/scenario';
 
-export type SmogScenario = 'baseline' | 'spike' | 'clear';
+export type { SmogScenario };
 
 interface InversionBannerProps {
   aqi: number;
@@ -11,24 +15,35 @@ interface InversionBannerProps {
   onScenarioChange: (scenario: SmogScenario) => void;
 }
 
-const SCENARIO_MET: Record<SmogScenario, { ground: number; aloft: number; wind: number }> = {
-  baseline: { ground: 9, aloft: 11.5, wind: 7 },
-  spike: { ground: 5, aloft: 11.0, wind: 2.5 },
-  clear: { ground: 15, aloft: 11.0, wind: 18 },
-};
+const SCENARIO_BUTTONS: readonly {
+  id: SmogScenario;
+  label: string;
+  activeClass: string;
+}[] = [
+  { id: 'baseline', label: 'Live Baseline', activeClass: 'border-sky-700 bg-sky-700 text-white' },
+  {
+    id: 'spike',
+    label: 'Simulate Winter Smog Spike',
+    activeClass: 'border-rose-800 bg-rose-800 text-white',
+  },
+  {
+    id: 'clear',
+    label: 'Simulate Solar Dispersion',
+    activeClass: 'border-emerald-800 bg-emerald-800 text-white',
+  },
+];
 
-/** Displays thermal boundary-layer inversion status + accessible simulation controls. */
+/** Displays thermal boundary-layer inversion status and accessible scenario toggle controls. */
 export function InversionBanner({ aqi, scenario, onScenarioChange }: InversionBannerProps) {
-  const met = SCENARIO_MET[scenario];
+  const met = SCENARIO_METEOROLOGY[scenario];
   const assessment = evaluateInversionRisk(met.ground, met.aloft, met.wind, aqi);
   const severe = assessment.severity === 'severe';
+  const containerClass = severe ? 'border-rose-300 bg-rose-50' : 'border-slate-200 bg-white';
 
   return (
     <section
       aria-labelledby="inversion-heading"
-      className={`rounded-2xl border p-5 shadow-sm ${
-        severe ? 'border-rose-300 bg-rose-50' : 'border-slate-200 bg-white'
-      }`}
+      className={`rounded-2xl border p-5 shadow-sm ${containerClass}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div role={severe ? 'alert' : 'status'} aria-live={severe ? 'assertive' : 'polite'}>
@@ -53,43 +68,25 @@ export function InversionBanner({ aqi, scenario, onScenarioChange }: InversionBa
           role="group"
           aria-label="Atmospheric scenario simulator"
         >
-          <button
-            type="button"
-            aria-pressed={scenario === 'baseline'}
-            onClick={() => onScenarioChange('baseline')}
-            className={`min-h-[44px] rounded-xl border px-3 py-1.5 text-xs font-semibold ${
-              scenario === 'baseline'
-                ? 'border-sky-700 bg-sky-700 text-white'
-                : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50'
-            }`}
-          >
-            Live Baseline
-          </button>
-          <button
-            type="button"
-            aria-pressed={scenario === 'spike'}
-            onClick={() => onScenarioChange('spike')}
-            className={`min-h-[44px] rounded-xl border px-3 py-1.5 text-xs font-semibold ${
-              scenario === 'spike'
-                ? 'border-rose-800 bg-rose-800 text-white'
-                : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50'
-            }`}
-          >
-            Simulate Winter Smog Spike
-          </button>
-          <button
-            type="button"
-            aria-pressed={scenario === 'clear'}
-            onClick={() => onScenarioChange('clear')}
-            className={`inline-flex min-h-[44px] items-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-semibold ${
-              scenario === 'clear'
-                ? 'border-emerald-800 bg-emerald-800 text-white'
-                : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50'
-            }`}
-          >
-            <Sun className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Simulate Solar Dispersion</span>
-          </button>
+          {SCENARIO_BUTTONS.map(({ id, label, activeClass }) => {
+            const pressed = scenario === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={pressed}
+                onClick={() => onScenarioChange(id)}
+                className={`inline-flex min-h-[44px] items-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-semibold ${
+                  pressed
+                    ? activeClass
+                    : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50'
+                }`}
+              >
+                {id === 'clear' && <Sun className="h-3.5 w-3.5" aria-hidden="true" />}
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+/**
+ * Accessible city lookup form with quick urban preset buttons.
+ */
 import { Search } from 'lucide-react';
+import { type SyntheticEvent, useState } from 'react';
 import { POPULAR_CITIES } from '@/lib/aqi/baseline';
 
 interface CitySearchFormProps {
@@ -10,6 +13,25 @@ interface CitySearchFormProps {
   loading?: boolean;
 }
 
+function QuickCityChips({ onPick }: { onPick: (city: string) => void }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2" aria-label="Quick city examples">
+      <span className="text-xs font-medium text-slate-600">Try:</span>
+      {POPULAR_CITIES.slice(0, 6).map((city) => (
+        <button
+          key={city}
+          type="button"
+          onClick={() => onPick(city)}
+          className="min-h-[44px] rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-800"
+        >
+          {city}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Coordinates validated city search submissions and quick example selections. */
 export function CitySearchForm({
   initialCity,
   onSelectCity,
@@ -17,13 +39,11 @@ export function CitySearchForm({
 }: CitySearchFormProps) {
   const [cityInput, setCityInput] = useState(initialCity);
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (loading) return;
     const trimmed = cityInput.trim();
-    if (trimmed.length >= 2) {
-      onSelectCity(trimmed);
-    }
+    if (trimmed.length >= 2) onSelectCity(trimmed);
   }
 
   return (
@@ -60,22 +80,12 @@ export function CitySearchForm({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2" aria-label="Quick city examples">
-        <span className="text-xs font-medium text-slate-600">Try:</span>
-        {POPULAR_CITIES.slice(0, 6).map((city) => (
-          <button
-            key={city}
-            type="button"
-            onClick={() => {
-              setCityInput(city);
-              onSelectCity(city);
-            }}
-            className="min-h-[44px] rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-800"
-          >
-            {city}
-          </button>
-        ))}
-      </div>
+      <QuickCityChips
+        onPick={(city) => {
+          setCityInput(city);
+          onSelectCity(city);
+        }}
+      />
     </form>
   );
 }

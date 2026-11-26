@@ -42,7 +42,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.4.1",
-    "@vitest/coverage-v8": "latest",
+    "@vitest/coverage-v8": "^5.1.2",
     "axe-core": "^4.10.3",
     "eslint": "^9.26.0",
     "eslint-config-next": "^16.4.6",
@@ -52,7 +52,8 @@
     "prettier": "^3.5.3",
     "tailwindcss": "^4.1.0",
     "typescript": "^5.8.3",
-    "vitest": "latest",
+    "typescript-eslint": "^8.74.0",
+    "vitest": "^5.1.2",
     "vitest-axe": "^0.1.0"
   }
 }

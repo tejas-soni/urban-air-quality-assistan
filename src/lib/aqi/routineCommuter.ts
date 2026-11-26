@@ -1,6 +1,10 @@
+/**
+ * Commuter persona daily routine generator prioritizing post-peak departure shifts and transit mode switches.
+ */
 import { estimateCommuteImpact, estimatePurifierImpact } from '@/lib/aqi/impact';
 import type { AqiReading, RoutineRecommendation, UserProfile } from '@/lib/types';
 
+/** Builds commuter routines comparing peak-hour shifts, rail/walking alternatives, and recirculation. */
 export function buildCommuterRoutines(
   reading: AqiReading,
   profile: UserProfile,

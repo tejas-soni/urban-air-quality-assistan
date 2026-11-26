@@ -1,5 +1,8 @@
 'use client';
 
+/**
+ * Shared light-mode page landmark shell wrapping navigation, main content, and footer.
+ */
 import type { ReactNode } from 'react';
 import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
@@ -9,6 +12,7 @@ interface AppShellProps {
   children: ReactNode;
 }
 
+/** Renders persistent top Navbar, `<main id="main-content">`, and Footer landmarks. */
 export function AppShell({ children }: AppShellProps) {
   const profile = useUserProfile();
 

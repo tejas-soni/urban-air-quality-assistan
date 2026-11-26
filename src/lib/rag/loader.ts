@@ -1,10 +1,13 @@
+/**
+ * Server-side knowledge-base filesystem loader reading /content markdown files with in-memory caching.
+ */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseMarkdownDoc } from '@/lib/rag/parser';
 import { searchDocs, type SearchOptions } from '@/lib/rag/search';
 import type { KbCategory, KbCitation, KbDoc } from '@/lib/types';
 
-const CATEGORIES: ReadonlyArray<KbCategory> = ['health-guidance', 'indoor-hacks', 'impact-data'];
+const CATEGORIES: readonly KbCategory[] = ['health-guidance', 'indoor-hacks', 'impact-data'];
 
 let cachedDocs: KbDoc[] | null = null;
 

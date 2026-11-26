@@ -1,9 +1,13 @@
+/**
+ * Community smog-action route powering school pledges, collective CO2e math, and WhatsApp cards.
+ */
 import { CommunityPlanner } from '@/components/community/CommunityPlanner';
 import { AppShell } from '@/components/layout/AppShell';
 import { fetchCityAqi } from '@/lib/providers/client';
 
 export const dynamic = 'force-dynamic';
 
+/** Server component bootstrapping live AQI for the interactive CommunityPlanner. */
 export default async function CommunityPage() {
   const initialReading = await fetchCityAqi('New Delhi');
 

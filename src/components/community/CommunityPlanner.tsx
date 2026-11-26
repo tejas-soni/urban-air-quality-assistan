@@ -1,8 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+/**
+ * Community smog-action planner combining live city lookup, collective math, and ShareCard output.
+ */
+import { type SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { CommunityPlanForm } from '@/components/community/CommunityPlanForm';
 import { ShareCard } from '@/components/community/ShareCard';
 import { useUserProfile } from '@/components/layout/useProfile';
+import { fetchCityAqiClient } from '@/lib/api/aqiClient';
 import { buildCommunityActionPlan } from '@/lib/aqi/community';
 import type { AqiReading } from '@/lib/types';
 
@@ -10,6 +15,7 @@ interface CommunityPlannerProps {
   initialReading: AqiReading;
 }
 
+/** Coordinates live AQI updates and collective emission/PM2.5 reduction summaries for groups. */
 export function CommunityPlanner({ initialReading }: CommunityPlannerProps) {
   const profile = useUserProfile();
   const [groupName, setGroupName] = useState('Neighborhood Clean Air & School Circle');
@@ -18,6 +24,10 @@ export function CommunityPlanner({ initialReading }: CommunityPlannerProps) {
   const [carTripsReplaced, setCarTripsReplaced] = useState(15);
   const [reading, setReading] = useState(initialReading);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const plan = buildCommunityActionPlan(
     {
@@ -29,91 +39,40 @@ export function CommunityPlanner({ initialReading }: CommunityPlannerProps) {
     reading,
   );
 
-  async function refreshCity(e: React.FormEvent) {
+  async function refreshCity(e: SyntheticEvent) {
     e.preventDefault();
     if (loading || city.trim().length < 2) return;
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setLoading(true);
-    try {
-      const res = await fetch(`/api/aqi?city=${encodeURIComponent(city.trim())}`);
-      if (res.ok) setReading(await res.json());
-    } finally {
-      setLoading(false);
-    }
+    setErrorMsg('');
+
+    const res = await fetchCityAqiClient(city.trim(), controller.signal);
+    setLoading(false);
+    if (res.ok) setReading(res.data);
+    else if (!res.aborted) setErrorMsg(res.error);
   }
 
   return (
     <div className="space-y-8">
-      <form
-        onSubmit={refreshCity}
-        className="no-print grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-5"
-      >
-        <div className="sm:col-span-2">
-          <label htmlFor="comm-group" className="block text-sm font-semibold text-slate-800">
-            School or group name
-          </label>
-          <input
-            id="comm-group"
-            type="text"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="comm-city" className="block text-sm font-semibold text-slate-800">
-            City
-          </label>
-          <input
-            id="comm-city"
-            type="text"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="comm-hh" className="block text-sm font-semibold text-slate-800">
-            Households
-          </label>
-          <input
-            id="comm-hh"
-            type="number"
-            min={1}
-            max={2000}
-            value={households}
-            onChange={(e) => setHouseholds(Number(e.target.value) || 1)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="comm-trips" className="block text-sm font-semibold text-slate-800">
-            Car trips replaced
-          </label>
-          <input
-            id="comm-trips"
-            type="number"
-            min={0}
-            max={2000}
-            value={carTripsReplaced}
-            onChange={(e) => setCarTripsReplaced(Number(e.target.value) || 0)}
-            className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900"
-          />
-        </div>
-
-        <div className="sm:col-span-2 lg:col-span-5">
-          <button
-            type="submit"
-            aria-disabled={loading}
-            className="min-h-[44px] rounded-xl bg-sky-700 px-5 py-2 text-sm font-semibold text-white hover:bg-sky-800 aria-disabled:opacity-60"
-          >
-            {loading ? 'Updating city AQI...' : 'Update City Reading & Plan'}
-          </button>
-        </div>
-      </form>
-
+      <CommunityPlanForm
+        groupName={groupName}
+        onGroupNameChange={setGroupName}
+        city={city}
+        onCityChange={setCity}
+        households={households}
+        onHouseholdsChange={setHouseholds}
+        carTripsReplaced={carTripsReplaced}
+        onTripsChange={setCarTripsReplaced}
+        loading={loading}
+        onSubmit={(ev) => void refreshCity(ev)}
+      />
+      {errorMsg && (
+        <p role="alert" className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-900">
+          {errorMsg}
+        </p>
+      )}
       <ShareCard plan={plan} />
     </div>
   );

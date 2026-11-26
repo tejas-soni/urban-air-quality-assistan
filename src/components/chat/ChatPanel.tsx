@@ -1,35 +1,61 @@
 'use client';
 
+/**
+ * Streaming AI Air Quality Coach panel powered by Vercel AI SDK and persona prompt suggestions.
+ */
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Send, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { MessageBubble } from '@/components/chat/MessageBubble';
+import { ChatTranscript } from '@/components/chat/ChatTranscript';
 import { useUserProfile } from '@/components/layout/useProfile';
-import type { Persona } from '@/lib/types';
-
-const PROMPTS_BY_PERSONA: Record<Persona, string[]> = {
-  family: [
-    'When is the safest 15-minute window to ventilate our home today?',
-    'Should I build a DIY Corsi-Rosenthal filter or keep windows closed?',
-    'Is outdoor play safe for young kids at current AQI levels?',
-  ],
-  commuter: [
-    'How much PM2.5 exposure do I cut by shifting my commute 30 min later?',
-    'Compare daily CO2e emissions for car vs metro vs walking for 10 km.',
-    'Should I use car AC recirculation mode in winter traffic?',
-  ],
-  community: [
-    'Draft a school gate no-idling action summary with quantified impact.',
-    'How many portable air cleaners does a standard classroom need?',
-    'What AQI thresholds should trigger our neighborhood WhatsApp alert?',
-  ],
-};
+import { CHAT_SUGGESTIONS_BY_PERSONA } from '@/lib/persona/presets';
 
 interface ChatPanelProps {
   compact?: boolean;
 }
 
+function ChatQuestionForm(props: {
+  input: string;
+  isBusy: boolean;
+  onChange: (val: string) => void;
+  onSend: () => void;
+}) {
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        props.onSend();
+      }}
+      className="mt-4 flex flex-col gap-2 sm:flex-row"
+    >
+      <div className="flex-1">
+        <label htmlFor="chat-question-input" className="sr-only">
+          Ask BreatheWise about air quality or low-emission routines
+        </label>
+        <input
+          id="chat-question-input"
+          type="text"
+          value={props.input}
+          onChange={(e) => props.onChange(e.target.value)}
+          placeholder="Ask e.g. When should I ventilate today?"
+          maxLength={800}
+          className="min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-base text-slate-900 placeholder:text-slate-400"
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={props.isBusy || !props.input.trim()}
+        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-sky-700 px-5 py-2.5 text-base font-semibold text-white hover:bg-sky-800 disabled:opacity-50"
+      >
+        <Send className="h-4 w-4" aria-hidden="true" />
+        <span>Ask Assistant</span>
+      </button>
+    </form>
+  );
+}
+
+/** Renders starter persona questions, live chat transcript, error state, and submission form. */
 export function ChatPanel({ compact = false }: ChatPanelProps) {
   const profile = useUserProfile();
   const [input, setInput] = useState('');
@@ -37,12 +63,12 @@ export function ChatPanel({ compact = false }: ChatPanelProps) {
   const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), []);
   const { messages, sendMessage, status, error } = useChat({ transport });
   const isBusy = status === 'submitted' || status === 'streaming';
-  const suggestions = PROMPTS_BY_PERSONA[profile.persona];
+  const suggestions = CHAT_SUGGESTIONS_BY_PERSONA[profile.persona];
 
   function handleSend(text: string) {
     const clean = text.trim();
     if (!clean || isBusy) return;
-    sendMessage({ text: clean }, { body: { profile } });
+    void sendMessage({ text: clean }, { body: { profile } });
     setInput('');
   }
 
@@ -77,23 +103,7 @@ export function ChatPanel({ compact = false }: ChatPanelProps) {
         ))}
       </div>
 
-      <div
-        aria-live="polite"
-        aria-label="Conversation transcript"
-        className={`mt-4 space-y-4 overflow-y-auto rounded-xl bg-slate-50 p-4 ${compact ? 'min-h-[220px] max-h-[340px]' : 'min-h-[320px] max-h-[500px]'}`}
-      >
-        {messages.length === 0 ? (
-          <p className="text-base text-slate-600">
-            Ask any question about winter smog, indoor filtration, commute timing, or community
-            plans. Every reply checks live AQI and cites verified WHO/EPA sources.
-          </p>
-        ) : (
-          messages.map((msg) => <MessageBubble key={msg.id} message={msg} />)
-        )}
-        {isBusy && (
-          <p className="text-sm font-medium text-sky-700">Checking live AQI &amp; sources...</p>
-        )}
-      </div>
+      <ChatTranscript messages={messages} isBusy={isBusy} compact={compact} />
 
       {error && (
         <p role="alert" className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-900">
@@ -101,36 +111,12 @@ export function ChatPanel({ compact = false }: ChatPanelProps) {
         </p>
       )}
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSend(input);
-        }}
-        className="mt-4 flex flex-col gap-2 sm:flex-row"
-      >
-        <div className="flex-1">
-          <label htmlFor="chat-question-input" className="sr-only">
-            Ask BreatheWise about air quality or low-emission routines
-          </label>
-          <input
-            id="chat-question-input"
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask e.g. When should I ventilate today?"
-            maxLength={800}
-            className="min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-base text-slate-900 placeholder:text-slate-400"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isBusy || !input.trim()}
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-sky-700 px-5 py-2.5 text-base font-semibold text-white hover:bg-sky-800 disabled:opacity-50"
-        >
-          <Send className="h-4 w-4" aria-hidden="true" />
-          <span>Ask Assistant</span>
-        </button>
-      </form>
+      <ChatQuestionForm
+        input={input}
+        isBusy={isBusy}
+        onChange={setInput}
+        onSend={() => handleSend(input)}
+      />
     </section>
   );
 }

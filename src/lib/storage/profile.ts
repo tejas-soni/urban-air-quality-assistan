@@ -1,3 +1,6 @@
+/**
+ * Client-side localStorage persistence for UserProfile with Zod recovery on corrupt storage.
+ */
 import { UserProfileSchema } from '@/lib/schemas';
 import type { Persona, UserProfile } from '@/lib/types';
 

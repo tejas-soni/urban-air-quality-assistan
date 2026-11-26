@@ -1,3 +1,6 @@
+/**
+ * Quantified ventilation and indoor air filtration impact estimators grounded in EPA/WHO sources.
+ */
 import type { ImpactEstimate, PurifierType } from '@/lib/types';
 
 export { estimateCommuteImpact, estimateCommunityImpact } from '@/lib/aqi/commuteImpact';

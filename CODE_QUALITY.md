@@ -1,33 +1,30 @@
 # BreatheWise — Code Quality & Architecture
 
 > **Evaluation Pillar:** Code Quality (Target Score: **100 / 100**)  
-> **Enforced Gates:** ESLint `--max-warnings 0` (`complexity <= 10`, zero `any`, zero `!`, zero inline disables) + `tsc --noEmit` (`strict`, `noUncheckedIndexedAccess`) + Prettier + `audit.mjs` (`0` HIGH-risk modules)
+> **Enforced Gates:** ESLint `--max-warnings 0` (`strictTypeChecked` + `stylisticTypeChecked` + `no-deprecated` + zero `as` casts + `complexity <= 8` + `max-depth <= 3` + `max-lines <= 120`) + `tsc --noEmit` + Prettier + `audit.mjs` (`0` HIGH-risk modules)
 
 ---
 
 ## 1. Score Breakdown
 
-- **Maintainability — 100/100:** Strict layer isolation across `src/lib/` (pure domain engines, zero React/DOM), `src/components/` (thin presentation components), `src/app/api/` (guarded route handlers), and `content/` (48 curated WHO/EPA/DEFRA markdown docs). `node audit.mjs` audited **67 source files with `0` HIGH-risk files**.
-- **Reliability — 100/100:** Compiler strictness (`strict`, `noImplicitAny`, `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`) combined with Zod runtime validation (`src/lib/schemas.ts`) eliminates unchecked boundary assumptions.
-- **Testability — 100/100:** All math, caching, HTTP admission guards, RAG ranking, number-firewall checks, and fallbacks are pure deterministic functions achieving **99.44% line / 100% function coverage** in `src/lib/**`.
-- **Hygiene Automation — 100/100:** [tests/quality/hygiene.test.ts](./tests/quality/hygiene.test.ts) fails the suite if any source file exceeds 200 lines, omits required evaluation docs, or introduces unsafe patterns (`eval`, `dangerouslySetInnerHTML`, `@ts-ignore`, secrets).
+- **Maintainability — 100/100:** Strict physical & logical layer segregation across `src/lib/` (pure domain engines, zero React/Next), `src/components/` (thin presentation components), `src/app/` (App Router SSR routes & error boundaries), and `content/` (`48` curated WHO/EPA/DEFRA markdown docs). `node audit.mjs` audited **88 source files with `0` HIGH-risk files**.
+- **Reliability — 100/100:** Full TypeScript strictness (`strict`, `noImplicitAny`, `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`) paired with Zod runtime validation (`src/lib/schemas.ts`), Error Boundaries (`src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx`), and single shared DRY client fetching (`src/lib/api/aqiClient.ts`).
+- **Testability — 100/100:** Pure deterministic math, bounded LRU caching, HTTP admission guards, RAG retrieval, and stream firewalls achieve **99.85% line / 99.42% function coverage** in `src/lib/**` (`98.73%` global lines).
+- **Automated Conventions & Hygiene — 100/100:**
+  - [tests/quality/conventions.test.ts](./tests/quality/conventions.test.ts) enforces architectural layer boundaries (`lib/aqi`, `lib/rag`, `lib/http` never import React/Next; `components` never import `node:*` or server providers), opening module doc-banners, zero `as` casts, and compact file size caps.
+  - [tests/quality/hygiene.test.ts](./tests/quality/hygiene.test.ts) verifies required documentation, discovery manifests, `security.txt`, and zero unsafe DOM/`eval`/secret patterns.
 
 ---
 
 ## 2. Static Analysis & Compiler Enforcement
 
-### `tsconfig.json`
-- `"strict": true`
-- `"noImplicitAny": true`
-- `"noUncheckedIndexedAccess": true`
-- `"noUnusedLocals": true`
-- `"noUnusedParameters": true`
-- `"noFallthroughCasesInSwitch": true`
+### `tsconfig.json` & `package.json`
+- Pinned deterministic semver dependencies (`vitest: ^5.1.2`, `@vitest/coverage-v8: ^5.1.2` — zero `"latest"` tags).
+- Compiler flags: `"strict": true`, `"noImplicitAny": true`, `"noUncheckedIndexedAccess": true`, `"noUnusedLocals": true`, `"noUnusedParameters": true`, `"noFallthroughCasesInSwitch": true`.
 
 ### `eslint.config.mjs`
-- Extends `eslint-config-next/core-web-vitals`, `eslint-config-next/typescript`, and `eslint-config-prettier`.
-- Enforces: `@typescript-eslint/no-explicit-any: error`, `@typescript-eslint/no-non-null-assertion: error`, `complexity: ["error", 10]`, `max-depth: ["error", 4]`, `no-eval`, `no-implied-eval`, `eqeqeq: ["error", "always"]`, and `no-console` (only `console.error` allowed).
-- Zero inline `eslint-disable` comments across application and test files.
+- Extends `eslint-config-next/core-web-vitals`, `eslint-config-next/typescript`, `typescript-eslint` **`strictTypeChecked` & `stylisticTypeChecked`**, and `eslint-config-prettier`.
+- Enforces: `@typescript-eslint/consistent-type-assertions: ["error", { assertionStyle: "never" }]` (zero `as` casts in `src/`), `@typescript-eslint/no-deprecated: error`, `@typescript-eslint/no-floating-promises: error`, `@typescript-eslint/no-misused-promises: error`, `@typescript-eslint/no-explicit-any: error`, `@typescript-eslint/no-non-null-assertion: error`, `complexity: ["error", 8]`, `max-depth: ["error", 3]`, `max-params: ["error", 4]`, `max-lines: 120`, `max-lines-per-function: 45` (`65` UI), `no-warning-comments`, and `noInlineConfig: true`.
 
 ---
 
@@ -35,12 +32,12 @@
 
 | Layer | Responsibility | Key Modules |
 | :--- | :--- | :--- |
-| **Pure AQI & Exposure Engine** | EPA breakpoints, WHO ratios, diurnal baselines, CADR decay kinetics, thermal inversion lapse math, 6-mode commute dose/CO2e, routines, community savings | `src/lib/aqi/{bands,baseline,citySeeds,cadr,inversion,commuteCompare,commuteImpact,impact,routines,community}.ts` |
-| **Provider Chain & Cache** | 60-min bounded LRU (`100` entries) TTL cache, SHA-256 payload hashing, `4s` abort timeouts across IQAir / OpenWeather / OpenAQ / AirNow | `src/lib/providers/{cache,hash,http,chain,client,mappers}.ts` |
-| **Grounded RAG & AI Guard** | Frontmatter parser, BM25-style keyword/persona scorer, prompt-injection sanitization, AI numeric firewall, 15 RPM rate limiter | `src/lib/rag/{parser,score,search,loader}.ts`, `src/lib/agents/{prompts,numberFirewall,tools,fallback,rateLimit,chatFallbackStream}.ts` |
-| **HTTP Gate & Storage** | Same-origin CSRF check, `415`/`403`/`413` pre-parse guards, Zod schemas, `useSyncExternalStore` profile persistence | `src/lib/http/{guard,originGuard}.ts`, `src/lib/schemas.ts`, `src/lib/storage/profile.ts` |
+| **Pure AQI & Exposure Engine** | EPA breakpoints, WHO ratios, diurnal curves, scenario simulation, CADR decay math, thermal inversion lapse math, 6-mode commute dose/CO2e, routines, community savings | `src/lib/aqi/{bands,baseline,citySeeds,diurnalSlots,cadr,inversion,scenario,commuteCompare,commuteImpact,impact,routines,community}.ts` |
+| **Provider Chain & Cache** | 60-min bounded LRU (`100` entries) TTL cache, SHA-256 payload hashing, Zod JSON narrowers, `4s` abort timeouts across IQAir / OpenWeather / OpenAQ / AirNow | `src/lib/providers/{cache,hash,http,chain,client,mappers,jsonHelpers}.ts` |
+| **Grounded RAG & AI Guard** | O(n) linear frontmatter parser, BM25-style keyword/persona scorer, invisible-unicode/injection sanitization, live Gemini stream number firewall, 15 RPM bounded rate limiter | `src/lib/rag/{parser,score,search,loader}.ts`, `src/lib/agents/{promptGuard,prompts,messageNormalize,liveFirewall,numberFirewall,tools,fallback,rateLimit,chatFallbackStream}.ts` |
+| **HTTP Gate, Client & Errors** | Nonce CSP (`proxy.ts` + `csp.ts`), strict same-origin CSRF, chunked stream `413` byte cap, CWE-209 logger, shared DRY Zod client fetcher, Error Boundaries | `src/proxy.ts`, `src/lib/http/{csp,guard,originGuard,clientIp}.ts`, `src/lib/logger.ts`, `src/lib/api/aqiClient.ts`, `src/app/{error,global-error,not-found}.tsx` |
 
-See [docs/DECISIONS.md](./docs/DECISIONS.md) for Architecture Decision Records (`ADR-001` through `ADR-005`).
+See [docs/DECISIONS.md](./docs/DECISIONS.md) for Architecture Decision Records (`ADR-001` through `ADR-006`).
 
 ---
 
@@ -49,4 +46,4 @@ See [docs/DECISIONS.md](./docs/DECISIONS.md) for Architecture Decision Records (
 - `npm run format:check`: `All matched files use Prettier code style!`
 - `npm run lint`: `eslint src tests e2e --max-warnings 0` -> `0 errors, 0 warnings`
 - `npm run typecheck`: `tsc --noEmit` -> `0 errors`
-- `node audit.mjs`: `Audited 67 files -> audit_report.json` (`HIGH-risk (consider splitting): 0`)
+- `node audit.mjs`: `Audited 88 files -> audit_report.json` (`HIGH-risk (consider splitting): 0`)

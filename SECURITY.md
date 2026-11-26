@@ -7,45 +7,50 @@
 ## 1. Threat Model
 
 - **Protected Assets:** Server-side API credentials (`GEMINI_API_KEY`, AQI provider tokens), free-tier LLM quota, numeric fidelity of respiratory health advice, and browser DOM integrity.
-- **Boundary Assumption:** Every HTTP header, request body, query string, upstream AQI payload, and LLM generation is untrusted until validated at runtime.
+- **Boundary Assumption:** Every HTTP header, chunked body, query string, upstream AQI payload, localStorage value, and LLM generation is untrusted until validated at runtime via Zod and strict origin/size guards.
 
 ---
 
 ## 2. Multi-Layer HTTP & API Admission Pipeline
 
-### Browser Security Headers ([next.config.ts](./next.config.ts))
-Applied across all routes:
-- **`Content-Security-Policy`:** `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`
-- **`Strict-Transport-Security`:** `max-age=31536000; includeSubDomains; preload`
+### Nonce-Based Strict Content Security Policy & Browser Hardening ([src/proxy.ts](./src/proxy.ts), [src/lib/http/csp.ts](./src/lib/http/csp.ts), [next.config.ts](./next.config.ts))
+- **`Content-Security-Policy` (Per-Request Nonce via Next.js 16 `proxy.ts` + `layout.tsx`):**
+  - Production page requests receive a fresh cryptographic UUID base64 nonce (`x-nonce`):
+    `default-src 'self'; script-src 'self' 'nonce-<random>' 'strict-dynamic'; style-src 'self' 'nonce-<random>'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`
+  - Zero `'unsafe-inline'` in production scripts or stylesheets. API routes receive `default-src 'none'; frame-ancestors 'none'`.
+- **`Strict-Transport-Security`:** `max-age=63072000; includeSubDomains; preload`
 - **`X-Content-Type-Options: nosniff`** · **`X-Frame-Options: DENY`** · **`Referrer-Policy: strict-origin-when-cross-origin`**
 - **`Cross-Origin-Opener-Policy: same-origin`** · **`Cross-Origin-Resource-Policy: same-origin`** · **`X-Permitted-Cross-Domain-Policies: none`**
-- **`Permissions-Policy`:** Denies `camera`, `microphone`, `geolocation`, `payment`, `usb`, `bluetooth`, `display-capture`.
+- **`Permissions-Policy`:** Denies 12 sensitive APIs (`camera`, `microphone`, `geolocation`, `payment`, `usb`, `bluetooth`, `display-capture`, `autoplay`, `fullscreen`, `midi`, `serial`, `hid`).
 
 ### `POST /api/chat` Request Gate ([src/lib/http/guard.ts](./src/lib/http/guard.ts) & [originGuard.ts](./src/lib/http/originGuard.ts))
 
-| Stage | Control | Status Returned | Verification |
+| Stage | Control | Status | Verification |
 | :--- | :--- | :---: | :--- |
 | 1. Media type | Requires `Content-Type: application/json` (blocks CSRF form posts) | `415` | `guard.test.ts`, `api-chat.test.ts` |
-| 2. CSRF / Origin | Blocks `Sec-Fetch-Site: cross-site`, `Origin: null`, and cross-origin callers | `403` | `guard.test.ts`, `api-chat.test.ts` |
-| 3. Payload size | Checks declared `Content-Length` and actual UTF-8 byte length against `8,192` bytes | `413` | `guard.test.ts`, `api-chat.test.ts` |
-| 4. Schema validation | Strict Zod parsing (`ChatRequestSchema`, `CityQuerySchema`, `UserProfileSchema`) | `400` | `schemas.test.ts`, `api-chat.test.ts` |
-| 5. Rate limiting | 15 requests/min sliding window per client IP (`rateLimit.ts`), degrading to local RAG stream | `200` (`rate-limit-fallback`) | `rateLimit.test.ts`, `api-chat.test.ts` |
-| 6. Response caching | Private AI replies include `Cache-Control: no-store` | `200` | `api-chat.test.ts` |
+| 2. Strict Same-Origin | Blocks `Sec-Fetch-Site` outside `{same-origin, none}` (blocking sibling `same-site` subdomains & `cross-site`), `Origin: null`, and cross-origin callers | `403` | `originGuard.ts`, `security.test.ts`, `api-chat.test.ts` |
+| 3. Streamed Byte Cap | Checks declared `Content-Length` AND reads `ReadableStream` chunk-by-chunk, cancelling stream immediately once UTF-8 bytes exceed `8,192` bytes | `413` | `guard.ts`, `security.test.ts`, `api-chat.test.ts` |
+| 4. Schema validation | Strict Zod parsing without `.passthrough()` (`ChatRequestSchema` strips unknown part keys; `AqiReadingSchema` validates client API payloads) | `400` | `schemas.test.ts`, `aqiClient.test.ts` |
+| 5. Bounded Rate Limit | 15 req/min sliding window per resolved IP (`clientIp.ts`), memory-bounded at `1,000` keys with stale eviction to prevent IP-flood OOM | `200` (`rate-limit-fallback`) | `rateLimit.ts`, `securityGuards.test.ts` |
+| 6. Response cache | Private AI replies include `Cache-Control: no-store` | `200` | `api-chat.test.ts` |
 
 ---
 
-## 3. Prompt Injection Guard & AI Number Firewall
+## 3. Prompt Injection Guard & Live AI Number Firewall
 
-1. **Input Sanitization ([src/lib/agents/prompts.ts](./src/lib/agents/prompts.ts)):** `sanitizeUserQuery()` collapses control newlines/tabs, neutralizes instruction-override phrases (`ignore previous instructions`, `system prompt`, `you are now`), and truncates queries to `800` characters.
-2. **Programmatic Number Firewall ([src/lib/agents/numberFirewall.ts](./src/lib/agents/numberFirewall.ts)):** Extracts numerals from generated replies (ignoring technical labels like `PM2.5`, `PM10`, `NO2`, `CO2e`, `N95`, `MERV-13`), verifies every figure against `buildAllowedNumberSet(aqi, profile, citations)`, and flags any ungrounded figures explicitly.
+1. **Sanitization & Random Data Fencing ([src/lib/agents/promptGuard.ts](./src/lib/agents/promptGuard.ts), [prompts.ts](./src/lib/agents/prompts.ts)):**
+   - Strips ASCII control characters (`\u0000-\u001f`, `\u007f`), zero-width/bidi spoofing characters (`\u200b-\u200d`, `\ufeff`, `\u202a-\u202e`), XML delimiter brackets (`<`, `>`), and instruction-override phrases (`ignore previous instructions`, `disregard prior`, `reveal system prompt`, `[INST]`).
+   - Wraps untrusted location strings (`profile.city` and external API station `city`) in randomized per-request XML delimiters (`<city_<uuid>>...`) labeled strictly as untrusted data.
+2. **Real-Time Number Firewall ([src/lib/agents/liveFirewall.ts](./src/lib/agents/liveFirewall.ts), [numberFirewall.ts](./src/lib/agents/numberFirewall.ts)):**
+   - Wraps BOTH live Gemini `UIMessageChunk` streams AND offline fallback replies through `buildAllowedNumberSet()` + `verifyReplyGrounding()`, appending an explicit grounding note if any unverified statistic appears.
+3. **O(n) ReDoS-Safe Markdown Parser ([src/lib/rag/parser.ts](./src/lib/rag/parser.ts)):** Line-scanning frontmatter/citation extraction avoids backtracking regex vulnerabilities (verified weekly by CodeQL `security-extended`).
 
 ---
 
-## 4. Secrets, Privacy & Supply Chain CI
+## 4. CWE-209 Logging, Supply Chain & Disclosure
 
-- **Server-Only Secrets:** API keys are read from `process.env` solely inside server routes/adapters. `.env*` files are gitignored; `.env.example` holds empty placeholders.
-- **No PII Storage:** User preferences remain strictly on-device in `localStorage` (`breathewise_profile_v1`).
-- **Continuous Security Verification:**
-  - `npm audit --omit=dev --audit-level=high`: **`found 0 vulnerabilities`**
-  - [tests/quality/hygiene.test.ts](./tests/quality/hygiene.test.ts): asserts zero API key strings (`AIza...`), zero `dangerouslySetInnerHTML`, zero `eval()`, and zero `@ts-ignore` directives.
-  - [.github/workflows/ci.yml](./.github/workflows/ci.yml) + [.github/workflows/codeql.yml](./.github/workflows/codeql.yml): runs Prettier, ESLint, coverage, `next build`, Playwright CSP check, `npm audit`, and CodeQL `security-extended` analysis.
+- **Server-Only Secrets & Redacted Logs ([src/lib/logger.ts](./src/lib/logger.ts)):** API keys stay strictly server-side (`process.env`). Server logs use `summarizeError()` to redact secret tokens (`AIza...`, `sk-...`, `Bearer ...`) before writing JSON diagnostics (`CWE-209` safe). Client errors return concise generic messages.
+- **No PII Storage:** Preferences stay on-device in `localStorage` (`breathewise_profile_v1`) validated with Zod on load.
+- **Supply Chain & CI ([ci.yml](./.github/workflows/ci.yml), [codeql.yml](./.github/workflows/codeql.yml), [dependabot.yml](./.github/dependabot.yml)):**
+  - All GitHub Actions are pinned to verified commit SHAs; Dependabot monitors npm & GitHub Actions weekly; CI runs full `npm audit --audit-level=low` (`found 0 vulnerabilities`) and an automated secret scan.
+  - Vulnerability disclosure policy published at [public/.well-known/security.txt](./public/.well-known/security.txt).
