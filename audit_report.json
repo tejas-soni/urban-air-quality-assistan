@@ -1,0 +1,552 @@
+[
+  {
+    "file": "src/components/onboarding/OnboardingForm.tsx",
+    "loc": 161,
+    "functions": 2,
+    "conditionals": 3,
+    "useEffects": 0,
+    "jsxElements": 46,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/components/chat/ChatPanel.tsx",
+    "loc": 125,
+    "functions": 4,
+    "conditionals": 8,
+    "useEffects": 0,
+    "jsxElements": 21,
+    "maxDepth": 4,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/components/aqi/LandingView.tsx",
+    "loc": 123,
+    "functions": 3,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 28,
+    "maxDepth": 5,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/types.ts",
+    "loc": 114,
+    "functions": 0,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/api/chat/route.ts",
+    "loc": 113,
+    "functions": 3,
+    "conditionals": 8,
+    "useEffects": 0,
+    "jsxElements": 2,
+    "maxDepth": 5,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/community/CommunityPlanner.tsx",
+    "loc": 109,
+    "functions": 2,
+    "conditionals": 8,
+    "useEffects": 0,
+    "jsxElements": 17,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/baseline.ts",
+    "loc": 107,
+    "functions": 6,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/community/ShareCard.tsx",
+    "loc": 103,
+    "functions": 4,
+    "conditionals": 2,
+    "useEffects": 0,
+    "jsxElements": 36,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/ForecastChart.tsx",
+    "loc": 91,
+    "functions": 3,
+    "conditionals": 7,
+    "useEffects": 0,
+    "jsxElements": 17,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/http.ts",
+    "loc": 89,
+    "functions": 6,
+    "conditionals": 7,
+    "useEffects": 0,
+    "jsxElements": 12,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/layout/Navbar.tsx",
+    "loc": 81,
+    "functions": 3,
+    "conditionals": 3,
+    "useEffects": 0,
+    "jsxElements": 11,
+    "maxDepth": 5,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/bandData.ts",
+    "loc": 75,
+    "functions": 0,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/DashboardView.tsx",
+    "loc": 72,
+    "functions": 3,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 18,
+    "maxDepth": 5,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/AqiCard.tsx",
+    "loc": 71,
+    "functions": 1,
+    "conditionals": 5,
+    "useEffects": 0,
+    "jsxElements": 27,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/CitySearchForm.tsx",
+    "loc": 67,
+    "functions": 4,
+    "conditionals": 2,
+    "useEffects": 0,
+    "jsxElements": 12,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/agents/prompts.ts",
+    "loc": 62,
+    "functions": 3,
+    "conditionals": 8,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/community.ts",
+    "loc": 60,
+    "functions": 1,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/impact.ts",
+    "loc": 59,
+    "functions": 2,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/aqi/routineFamily.ts",
+    "loc": 57,
+    "functions": 2,
+    "conditionals": 12,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/providers/chain.ts",
+    "loc": 56,
+    "functions": 2,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 3,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/rag/score.ts",
+    "loc": 53,
+    "functions": 3,
+    "conditionals": 10,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 1,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/aqi/bands.ts",
+    "loc": 52,
+    "functions": 4,
+    "conditionals": 7,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/commuteImpact.ts",
+    "loc": 50,
+    "functions": 2,
+    "conditionals": 5,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/rag/parser.ts",
+    "loc": 50,
+    "functions": 3,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 3,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/components/layout/useProfile.ts",
+    "loc": 49,
+    "functions": 7,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/client.ts",
+    "loc": 49,
+    "functions": 2,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 3,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/agents/rateLimit.ts",
+    "loc": 48,
+    "functions": 0,
+    "conditionals": 3,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 4,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/openWeatherMapper.ts",
+    "loc": 48,
+    "functions": 3,
+    "conditionals": 8,
+    "useEffects": 0,
+    "jsxElements": 2,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/schemas.ts",
+    "loc": 47,
+    "functions": 0,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/agents/tools.ts",
+    "loc": 46,
+    "functions": 5,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 5,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/chat/MessageBubble.tsx",
+    "loc": 45,
+    "functions": 2,
+    "conditionals": 5,
+    "useEffects": 0,
+    "jsxElements": 7,
+    "maxDepth": 5,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/routineCommuter.ts",
+    "loc": 44,
+    "functions": 1,
+    "conditionals": 6,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/cache.ts",
+    "loc": 42,
+    "functions": 1,
+    "conditionals": 2,
+    "useEffects": 0,
+    "jsxElements": 4,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/storage/profile.ts",
+    "loc": 38,
+    "functions": 3,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/dashboard/RoutineCard.tsx",
+    "loc": 36,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 16,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/rag/search.ts",
+    "loc": 36,
+    "functions": 4,
+    "conditionals": 2,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/aqAirNowMapper.ts",
+    "loc": 35,
+    "functions": 4,
+    "conditionals": 9,
+    "useEffects": 0,
+    "jsxElements": 3,
+    "maxDepth": 3,
+    "risk": "MEDIUM"
+  },
+  {
+    "file": "src/lib/rag/loader.ts",
+    "loc": 35,
+    "functions": 2,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/agents/fallback.ts",
+    "loc": 34,
+    "functions": 1,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/routineCommunity.ts",
+    "loc": 30,
+    "functions": 1,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/aqi/AqiBadge.tsx",
+    "loc": 28,
+    "functions": 1,
+    "conditionals": 1,
+    "useEffects": 0,
+    "jsxElements": 5,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/layout.tsx",
+    "loc": 25,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 3,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/layout/Footer.tsx",
+    "loc": 24,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 7,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/test/setup.ts",
+    "loc": 22,
+    "functions": 1,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/community/page.tsx",
+    "loc": 21,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 6,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/api/aqi/route.ts",
+    "loc": 20,
+    "functions": 1,
+    "conditionals": 3,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 3,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/components/layout/AppShell.tsx",
+    "loc": 20,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 4,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/aqi/routines.ts",
+    "loc": 19,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 0,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/mappers.ts",
+    "loc": 19,
+    "functions": 1,
+    "conditionals": 4,
+    "useEffects": 0,
+    "jsxElements": 1,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/chat/page.tsx",
+    "loc": 18,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 6,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/onboarding/page.tsx",
+    "loc": 17,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 6,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/dashboard/page.tsx",
+    "loc": 12,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 2,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/app/page.tsx",
+    "loc": 12,
+    "functions": 1,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 2,
+    "maxDepth": 2,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/lib/providers/jsonHelpers.ts",
+    "loc": 9,
+    "functions": 3,
+    "conditionals": 5,
+    "useEffects": 0,
+    "jsxElements": 2,
+    "maxDepth": 1,
+    "risk": "LOW"
+  },
+  {
+    "file": "src/types/vitest-axe.d.ts",
+    "loc": 5,
+    "functions": 0,
+    "conditionals": 0,
+    "useEffects": 0,
+    "jsxElements": 2,
+    "maxDepth": 2,
+    "risk": "LOW"
+  }
+]
